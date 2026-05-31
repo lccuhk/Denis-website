@@ -20,7 +20,9 @@
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px 0;
         }
 
         .game-container {
@@ -303,6 +305,80 @@
         .canvas-wrapper {
             position: relative;
             display: inline-block;
+        }
+
+        @media (max-width: 900px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            #gameCanvas {
+                width: 100%;
+                max-width: 600px;
+                height: auto;
+            }
+
+            .scoreboard {
+                font-size: 1.2rem;
+            }
+
+            .player {
+                padding: 0.3rem 1rem;
+                min-width: 100px;
+            }
+
+            .score {
+                font-size: 1.5rem;
+            }
+
+            .controls {
+                gap: 1rem;
+            }
+
+            .control-info {
+                padding: 0.8rem 1rem;
+            }
+
+            .countdown {
+                font-size: 5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            .scoreboard {
+                font-size: 1rem;
+                gap: 0.5rem;
+            }
+
+            .player {
+                min-width: 80px;
+            }
+
+            .vs {
+                font-size: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .control-info {
+                padding: 0.5rem 1rem;
+            }
+
+            .countdown {
+                font-size: 3rem;
+            }
+
+            button {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
