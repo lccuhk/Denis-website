@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双人乒乓球对战</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .player {
+            padding: 0.5rem 1.5rem;
+            border-radius: 10px;
+            min-width: 120px;
+        }
+
+        .player1 {
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .player2 {
+            background: rgba(255, 0, 255, 0.2);
+            border: 2px solid #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .score {
+            font-size: 2rem;
+            margin-top: 0.3rem;
+        }
+
+        .vs {
+            font-size: 1.5rem;
+            color: #888;
+        }
+
+        #gameCanvas {
+            border: 3px solid #444;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2), 0 0 60px rgba(255, 0, 255, 0.1);
+            background: #0f0f23;
+        }
+
+        .controls {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-info h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .key {
+            display: inline-block;
+            background: #333;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            margin: 0.2rem;
+            font-family: monospace;
+            border: 1px solid #555;
+            box-shadow: 0 2px 0 #222;
+        }
+
+        .game-status {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            min-height: 1.5rem;
+            color: #00ffff;
+        }
+
+        .winner {
+            font-size: 2rem;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🏓 双人乒乓球对战 🏓</h1>
+        
+        <div class="scoreboard">
+            <div class="player player1">
+                <div>玩家 1</div>
+                <div class="score" id="score1">0</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="player player2">
+                <div>玩家 2</div>
+                <div class="score" id="score2">0</div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="800" height="500" tabindex="0"></canvas>
+
+        <div class="game-status" id="gameStatus">点击游戏区域，然后按 空格键 开始</div>
+
+        <div class="controls">
+            <div class="control-info">
+                <h3>🎮 玩家 1 控制</h3>
+                <span class="key">W</span> 向上<br>
+                <span class="key">S</span> 向下
+            </div>
+            <div class="control-info">
+                <h3>🎮 玩家 2 控制</h3>
+                <span class="key">↑</span> 向上<br>
+                <span class="key">↓</span> 向下
+            </div>
+            <div class="control-info">
+                <h3>⏸️ 游戏控制</h3>
+                <span class="key">空格</span> 开始/暂停<br>
+                <span class="key">R</span> 重新开始
+            </div>
+        </div>
+
+        <button id="restartBtn">🔄 重新开始</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const score1El = document.getElementById('score1');
+        const score2El = document.getElementById('score2');
+        const gameStatusEl = document.getElementById('gameStatus');
+        const restartBtn = document.getElementById('restartBtn');
+
+        const WINNING_SCORE = 5;
+        const PADDLE_WIDTH = 12;
+        const PADDLE_HEIGHT = 100;
+        const BALL_SIZE = 12;
+        const PADDLE_SPEED = 8;
+        const INITIAL_BALL_SPEED = 5;
+
+        let gameRunning = false;
+        let gamePaused = false;
+        let score1 = 0;
+        let score2 = 0;
+
+        let paddle1 = {
+            x: 20,
+            y: canvas.height / 2 - PADDLE_HEIGHT / 2,
+            width: PADDLE_WIDTH,
+            height: PADDLE_HEIGHT,
+            dy: 0,
+            color: '#00ffff'
+        };
+
+        let paddle2 = {
+            x: canvas.width - 20 - PADDLE_WIDTH,
+            y: canvas.height / 2 - PADDLE_HEIGHT / 2,
+            width: PADDLE_WIDTH,
+            height: PADDLE_HEIGHT,
+            dy: 0,
+            color: '#ff00ff'
+        };
+
+        let ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            size: BALL_SIZE,
+            dx: INITIAL_BALL_SPEED,
+            dy: INITIAL_BALL_SPEED * (Math.random() > 0.5 ? 1 : -1),
+            speed: INITIAL_BALL_SPEED,
+            color: '#ffffff'
+        };
+
+        const keys = {};
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            keys[key] = true;
+            
+            if (e.key === ' ' || key === 'arrowup' || key === 'arrowdown' || key === 'w' || key === 's') {
+                e.preventDefault();
+            }
+            
+            if (e.key === ' ') {
+                if (!gameRunning) {
+                    startGame();
+                } else {
+                    togglePause();
+                }
+            }
+            
+            if (key === 'r') {
+                resetGame();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        restartBtn.addEventListener('click', resetGame);
+        
+        canvas.addEventListener('click', () => {
+            canvas.focus();
+        });
+        
+        window.addEventListener('load', () => {
+            canvas.focus();
+        });
+
+        function startGame() {
+            gameRunning = true;
+            gamePaused = false;
+            gameStatusEl.textContent = '游戏进行中...';
+            gameStatusEl.className = 'game-status';
+        }
+
+        function togglePause() {
+            gamePaused = !gamePaused;
+            if (gamePaused) {
+                gameStatusEl.textContent = '⏸️ 游戏暂停 - 按空格键继续';
+            } else {
+                gameStatusEl.textContent = '游戏进行中...';
+            }
+        }
+
+        function resetGame() {
+            gameRunning = false;
+            gamePaused = false;
+            score1 = 0;
+            score2 = 0;
+            updateScore();
+            resetBall();
+            resetPaddles();
+            gameStatusEl.textContent = '点击游戏区域，然后按 空格键 开始';
+            gameStatusEl.className = 'game-status';
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.speed = INITIAL_BALL_SPEED;
+            ball.dx = INITIAL_BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
+            ball.dy = INITIAL_BALL_SPEED * (Math.random() - 0.5) * 2;
+        }
+
+        function resetPaddles() {
+            paddle1.y = canvas.height / 2 - PADDLE_HEIGHT / 2;
+            paddle2.y = canvas.height / 2 - PADDLE_HEIGHT / 2;
+        }
+
+        function updateScore() {
+            score1El.textContent = score1;
+            score2El.textContent = score2;
+        }
+
+        function checkWinner() {
+            if (score1 >= WINNING_SCORE) {
+                gameRunning = false;
+                gameStatusEl.textContent = '🎉 玩家 1 获胜！🎉';
+                gameStatusEl.className = 'game-status winner';
+                return true;
+            }
+            if (score2 >= WINNING_SCORE) {
+                gameRunning = false;
+                gameStatusEl.textContent = '🎉 玩家 2 获胜！🎉';
+                gameStatusEl.className = 'game-status winner';
+                return true;
+            }
+            return false;
+        }
+
+        function update() {
+            if (!gameRunning || gamePaused) return;
+
+            if (keys['w']) paddle1.dy = -PADDLE_SPEED;
+            else if (keys['s']) paddle1.dy = PADDLE_SPEED;
+            else paddle1.dy = 0;
+
+            if (keys['arrowup']) paddle2.dy = -PADDLE_SPEED;
+            else if (keys['arrowdown']) paddle2.dy = PADDLE_SPEED;
+            else paddle2.dy = 0;
+
+            paddle1.y += paddle1.dy;
+            paddle2.y += paddle2.dy;
+
+            paddle1.y = Math.max(0, Math.min(canvas.height - paddle1.height, paddle1.y));
+            paddle2.y = Math.max(0, Math.min(canvas.height - paddle2.height, paddle2.y));
+
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            if (ball.y - ball.size <= 0 || ball.y + ball.size >= canvas.height) {
+                ball.dy *= -1;
+                ball.y = ball.y - ball.size <= 0 ? ball.size : canvas.height - ball.size;
+            }
+
+            if (ball.x - ball.size <= paddle1.x + paddle1.width &&
+                ball.x + ball.size >= paddle1.x &&
+                ball.y >= paddle1.y &&
+                ball.y <= paddle1.y + paddle1.height &&
+                ball.dx < 0) {
+                
+                ball.dx *= -1;
+                ball.speed += 0.2;
+                ball.dx = ball.speed;
+                
+                let hitPos = (ball.y - (paddle1.y + paddle1.height / 2)) / (paddle1.height / 2);
+                ball.dy = hitPos * ball.speed;
+                
+                ball.x = paddle1.x + paddle1.width + ball.size;
+            }
+
+            if (ball.x + ball.size >= paddle2.x &&
+                ball.x - ball.size <= paddle2.x + paddle2.width &&
+                ball.y >= paddle2.y &&
+                ball.y <= paddle2.y + paddle2.height &&
+                ball.dx > 0) {
+                
+                ball.dx *= -1;
+                ball.speed += 0.2;
+                ball.dx = -ball.speed;
+                
+                let hitPos = (ball.y - (paddle2.y + paddle2.height / 2)) / (paddle2.height / 2);
+                ball.dy = hitPos * ball.speed;
+                
+                ball.x = paddle2.x - ball.size;
+            }
+
+            if (ball.x - ball.size <= 0) {
+                score2++;
+                updateScore();
+                if (!checkWinner()) {
+                    resetBall();
+                }
+            }
+
+            if (ball.x + ball.size >= canvas.width) {
+                score1++;
+                updateScore();
+                if (!checkWinner()) {
+                    resetBall();
+                }
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = '#0f0f23';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.setLineDash([10, 10]);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = paddle1.color;
+            ctx.fillStyle = paddle1.color;
+            ctx.fillRect(paddle1.x, paddle1.y, paddle1.width, paddle1.height);
+
+            ctx.shadowColor = paddle2.color;
+            ctx.fillStyle = paddle2.color;
+            ctx.fillRect(paddle2.x, paddle2.y, paddle2.width, paddle2.height);
+
+            ctx.shadowColor = ball.color;
+            ctx.fillStyle = ball.color;
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.font = 'bold 150px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(score1, canvas.width / 4, canvas.height / 2);
+            ctx.fillText(score2, canvas.width * 3 / 4, canvas.height / 2);
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
