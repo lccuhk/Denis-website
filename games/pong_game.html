@@ -131,8 +131,14 @@
             50% { transform: scale(1.05); }
         }
 
-        button {
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
             margin-top: 1rem;
+        }
+
+        button {
             padding: 0.8rem 2rem;
             font-size: 1rem;
             background: linear-gradient(90deg, #00ffff, #ff00ff);
@@ -152,6 +158,152 @@
         button:active {
             transform: scale(0.98);
         }
+
+        button.secondary {
+            background: linear-gradient(90deg, #666, #444);
+        }
+
+        button.secondary:hover {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 40, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            z-index: 100;
+            display: none;
+            min-width: 300px;
+        }
+
+        .settings-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .settings-panel h2 {
+            margin-bottom: 1.5rem;
+            color: #00ffff;
+        }
+
+        .setting-item {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .setting-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .setting-item select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 2px solid #444;
+            background: #1a1a2e;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .setting-item select:focus {
+            outline: none;
+            border-color: #00ffff;
+        }
+
+        .setting-item .toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: #444;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(25px);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 99;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .countdown.show {
+            animation: countdownPop 1s ease-out;
+        }
+
+        @keyframes countdownPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -170,7 +322,10 @@
             </div>
         </div>
 
-        <canvas id="gameCanvas" width="800" height="500" tabindex="0"></canvas>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="800" height="500" tabindex="0"></canvas>
+            <div class="countdown" id="countdown"></div>
+        </div>
 
         <div class="game-status" id="gameStatus">点击游戏区域，然后按 空格键 开始</div>
 
@@ -192,7 +347,37 @@
             </div>
         </div>
 
-        <button id="restartBtn">🔄 重新开始</button>
+        <div class="button-group">
+            <button id="restartBtn">🔄 重新开始</button>
+            <button id="settingsBtn" class="secondary">⚙️ 设置</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="settings-panel" id="settingsPanel">
+        <h2>⚙️ 游戏设置</h2>
+        <div class="setting-item">
+            <label>🏆 获胜分数</label>
+            <select id="winningScore">
+                <option value="3">3 分制</option>
+                <option value="5" selected>5 分制</option>
+                <option value="7">7 分制</option>
+                <option value="11">11 分制</option>
+                <option value="15">15 分制</option>
+                <option value="21">21 分制</option>
+            </select>
+        </div>
+        <div class="setting-item">
+            <label>🔊 音效</label>
+            <div class="toggle">
+                <div class="toggle-switch active" id="soundToggle"></div>
+                <span id="soundStatus">开启</span>
+            </div>
+        </div>
+        <div class="button-group">
+            <button id="saveSettings">💾 保存</button>
+            <button id="closeSettings" class="secondary">❌ 关闭</button>
+        </div>
     </div>
 
     <script>
@@ -202,16 +387,79 @@
         const score2El = document.getElementById('score2');
         const gameStatusEl = document.getElementById('gameStatus');
         const restartBtn = document.getElementById('restartBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('overlay');
+        const closeSettings = document.getElementById('closeSettings');
+        const saveSettings = document.getElementById('saveSettings');
+        const winningScoreSelect = document.getElementById('winningScore');
+        const soundToggle = document.getElementById('soundToggle');
+        const soundStatus = document.getElementById('soundStatus');
+        const countdownEl = document.getElementById('countdown');
 
-        const WINNING_SCORE = 5;
+        let WINNING_SCORE = 5;
+        let soundEnabled = true;
         const PADDLE_WIDTH = 12;
         const PADDLE_HEIGHT = 100;
         const BALL_SIZE = 12;
         const PADDLE_SPEED = 8;
         const INITIAL_BALL_SPEED = 5;
 
+        let audioContext = null;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(frequency, duration, type = 'sine', volume = 0.3) {
+            if (!soundEnabled || !audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function playHitSound() {
+            playSound(440, 0.1, 'square', 0.2);
+        }
+
+        function playScoreSound() {
+            playSound(523, 0.15, 'sine', 0.3);
+            setTimeout(() => playSound(659, 0.15, 'sine', 0.3), 100);
+            setTimeout(() => playSound(784, 0.2, 'sine', 0.3), 200);
+        }
+
+        function playWinSound() {
+            const notes = [523, 587, 659, 698, 784, 880, 988, 1047];
+            notes.forEach((note, i) => {
+                setTimeout(() => playSound(note, 0.2, 'sine', 0.3), i * 100);
+            });
+        }
+
+        function playCountdownSound() {
+            playSound(880, 0.1, 'sine', 0.2);
+        }
+
+        function playGoSound() {
+            playSound(1047, 0.3, 'sine', 0.4);
+        }
+
         let gameRunning = false;
         let gamePaused = false;
+        let isCountingDown = false;
         let score1 = 0;
         let score2 = 0;
 
@@ -221,7 +469,10 @@
             width: PADDLE_WIDTH,
             height: PADDLE_HEIGHT,
             dy: 0,
-            color: '#00ffff'
+            color: '#00ffff',
+            originalColor: '#00ffff',
+            flashColor: '#ffffff',
+            flashTime: 0
         };
 
         let paddle2 = {
@@ -230,7 +481,10 @@
             width: PADDLE_WIDTH,
             height: PADDLE_HEIGHT,
             dy: 0,
-            color: '#ff00ff'
+            color: '#ff00ff',
+            originalColor: '#ff00ff',
+            flashColor: '#ffffff',
+            flashTime: 0
         };
 
         let ball = {
@@ -243,6 +497,87 @@
             color: '#ffffff'
         };
 
+        let particles = [];
+        let confettiParticles = [];
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = (Math.random() - 0.5) * 8;
+                this.speedY = (Math.random() - 0.5) * 8;
+                this.life = 1;
+                this.decay = Math.random() * 0.02 + 0.02;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= this.decay;
+                this.size *= 0.98;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class Confetti {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20;
+                this.color = ['#00ffff', '#ff00ff', '#ffff00', '#00ff00', '#ff6600', '#ff0066'][Math.floor(Math.random() * 6)];
+                this.size = Math.random() * 8 + 4;
+                this.speedY = Math.random() * 3 + 2;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+                this.life = 1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotationSpeed;
+                if (this.y > canvas.height + 20) {
+                    this.life = 0;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 5;
+                ctx.shadowColor = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size / 2);
+                ctx.restore();
+            }
+        }
+
+        function createHitParticles(x, y, color) {
+            for (let i = 0; i < 10; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 3; i++) {
+                confettiParticles.push(new Confetti());
+            }
+        }
+
         const keys = {};
 
         document.addEventListener('keydown', (e) => {
@@ -253,9 +588,10 @@
                 e.preventDefault();
             }
             
-            if (e.key === ' ') {
+            if (e.key === ' ' && !isCountingDown) {
+                initAudio();
                 if (!gameRunning) {
-                    startGame();
+                    startCountdown();
                 } else {
                     togglePause();
                 }
@@ -272,13 +608,91 @@
 
         restartBtn.addEventListener('click', resetGame);
         
+        settingsBtn.addEventListener('click', () => {
+            settingsPanel.classList.add('active');
+            overlay.classList.add('active');
+            gamePaused = true;
+        });
+
+        closeSettings.addEventListener('click', () => {
+            settingsPanel.classList.remove('active');
+            overlay.classList.remove('active');
+            if (gameRunning) gamePaused = false;
+        });
+
+        overlay.addEventListener('click', () => {
+            settingsPanel.classList.remove('active');
+            overlay.classList.remove('active');
+            if (gameRunning) gamePaused = false;
+        });
+
+        soundToggle.addEventListener('click', () => {
+            soundToggle.classList.toggle('active');
+            soundEnabled = soundToggle.classList.contains('active');
+            soundStatus.textContent = soundEnabled ? '开启' : '关闭';
+            if (soundEnabled) {
+                initAudio();
+                playSound(440, 0.1, 'sine', 0.2);
+            }
+        });
+
+        saveSettings.addEventListener('click', () => {
+            WINNING_SCORE = parseInt(winningScoreSelect.value);
+            settingsPanel.classList.remove('active');
+            overlay.classList.remove('active');
+            if (gameRunning) gamePaused = false;
+            gameStatusEl.textContent = `设置已保存 - ${WINNING_SCORE} 分制`;
+            setTimeout(() => {
+                if (!gameRunning) {
+                    gameStatusEl.textContent = '点击游戏区域，然后按 空格键 开始';
+                } else if (gamePaused) {
+                    gameStatusEl.textContent = '⏸️ 游戏暂停 - 按空格键继续';
+                } else {
+                    gameStatusEl.textContent = '游戏进行中...';
+                }
+            }, 2000);
+        });
+        
         canvas.addEventListener('click', () => {
             canvas.focus();
+            initAudio();
         });
         
         window.addEventListener('load', () => {
             canvas.focus();
         });
+
+        function startCountdown() {
+            isCountingDown = true;
+            gamePaused = true;
+            let count = 3;
+            
+            const countdownStep = () => {
+                if (count > 0) {
+                    countdownEl.textContent = count;
+                    countdownEl.classList.remove('show');
+                    void countdownEl.offsetWidth;
+                    countdownEl.classList.add('show');
+                    playCountdownSound();
+                    count--;
+                    setTimeout(countdownStep, 1000);
+                } else {
+                    countdownEl.textContent = 'GO!';
+                    countdownEl.classList.remove('show');
+                    void countdownEl.offsetWidth;
+                    countdownEl.classList.add('show');
+                    playGoSound();
+                    setTimeout(() => {
+                        countdownEl.classList.remove('show');
+                        isCountingDown = false;
+                        gamePaused = false;
+                        startGame();
+                    }, 500);
+                }
+            };
+            
+            countdownStep();
+        }
 
         function startGame() {
             gameRunning = true;
@@ -299,8 +713,11 @@
         function resetGame() {
             gameRunning = false;
             gamePaused = false;
+            isCountingDown = false;
             score1 = 0;
             score2 = 0;
+            particles = [];
+            confettiParticles = [];
             updateScore();
             resetBall();
             resetPaddles();
@@ -319,6 +736,8 @@
         function resetPaddles() {
             paddle1.y = canvas.height / 2 - PADDLE_HEIGHT / 2;
             paddle2.y = canvas.height / 2 - PADDLE_HEIGHT / 2;
+            paddle1.flashTime = 0;
+            paddle2.flashTime = 0;
         }
 
         function updateScore() {
@@ -331,20 +750,20 @@
                 gameRunning = false;
                 gameStatusEl.textContent = '🎉 玩家 1 获胜！🎉';
                 gameStatusEl.className = 'game-status winner';
+                playWinSound();
                 return true;
             }
             if (score2 >= WINNING_SCORE) {
                 gameRunning = false;
                 gameStatusEl.textContent = '🎉 玩家 2 获胜！🎉';
                 gameStatusEl.className = 'game-status winner';
+                playWinSound();
                 return true;
             }
             return false;
         }
 
-        function update() {
-            if (!gameRunning || gamePaused) return;
-
+        function updatePaddles() {
             if (keys['w']) paddle1.dy = -PADDLE_SPEED;
             else if (keys['s']) paddle1.dy = PADDLE_SPEED;
             else paddle1.dy = 0;
@@ -359,6 +778,22 @@
             paddle1.y = Math.max(0, Math.min(canvas.height - paddle1.height, paddle1.y));
             paddle2.y = Math.max(0, Math.min(canvas.height - paddle2.height, paddle2.y));
 
+            if (paddle1.flashTime > 0) {
+                paddle1.flashTime--;
+                paddle1.color = paddle1.flashTime % 4 < 2 ? paddle1.flashColor : paddle1.originalColor;
+            } else {
+                paddle1.color = paddle1.originalColor;
+            }
+
+            if (paddle2.flashTime > 0) {
+                paddle2.flashTime--;
+                paddle2.color = paddle2.flashTime % 4 < 2 ? paddle2.flashColor : paddle2.originalColor;
+            } else {
+                paddle2.color = paddle2.originalColor;
+            }
+        }
+
+        function updateBall() {
             ball.x += ball.dx;
             ball.y += ball.dy;
 
@@ -381,6 +816,10 @@
                 ball.dy = hitPos * ball.speed;
                 
                 ball.x = paddle1.x + paddle1.width + ball.size;
+                
+                paddle1.flashTime = 15;
+                playHitSound();
+                createHitParticles(ball.x, ball.y, paddle1.originalColor);
             }
 
             if (ball.x + ball.size >= paddle2.x &&
@@ -397,11 +836,16 @@
                 ball.dy = hitPos * ball.speed;
                 
                 ball.x = paddle2.x - ball.size;
+                
+                paddle2.flashTime = 15;
+                playHitSound();
+                createHitParticles(ball.x, ball.y, paddle2.originalColor);
             }
 
             if (ball.x - ball.size <= 0) {
                 score2++;
                 updateScore();
+                playScoreSound();
                 if (!checkWinner()) {
                     resetBall();
                 }
@@ -410,10 +854,33 @@
             if (ball.x + ball.size >= canvas.width) {
                 score1++;
                 updateScore();
+                playScoreSound();
                 if (!checkWinner()) {
                     resetBall();
                 }
             }
+        }
+
+        function updateParticles() {
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => p.update());
+            
+            confettiParticles = confettiParticles.filter(p => p.life > 0);
+            confettiParticles.forEach(p => p.update());
+        }
+
+        function update() {
+            if (!gameRunning || gamePaused || isCountingDown) {
+                if (!gameRunning && (score1 >= WINNING_SCORE || score2 >= WINNING_SCORE)) {
+                    createConfetti();
+                    updateParticles();
+                }
+                return;
+            }
+
+            updatePaddles();
+            updateBall();
+            updateParticles();
         }
 
         function draw() {
@@ -445,6 +912,9 @@
             ctx.fill();
 
             ctx.shadowBlur = 0;
+
+            particles.forEach(p => p.draw());
+            confettiParticles.forEach(p => p.draw());
 
             ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
             ctx.font = 'bold 150px Arial';
