@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>武林秘籍 - 侠客江湖</title>
+    <base href="./">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -775,6 +776,22 @@
         let currentCategory = 'all';
         let currentPostId = null;
 
+        // 获取正确的基础路径（适配 GitHub Pages 子路径）
+        function getBasePath() {
+            const pathname = window.location.pathname;
+            // 如果在子路径下（如 /Denis-website/blog.html），返回子路径
+            if (pathname.includes('/') && pathname.lastIndexOf('/') > 0) {
+                return pathname.substring(0, pathname.lastIndexOf('/') + 1);
+            }
+            return './';
+        }
+
+        // 获取文章的完整路径
+        function getPostPath(file) {
+            const basePath = getBasePath();
+            return basePath + file;
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
             initCategoryFilters();
@@ -873,7 +890,9 @@
             }
             
             try {
-                const response = await fetch(post.file);
+                const postPath = getPostPath(post.file);
+                console.log('Loading post from:', postPath);
+                const response = await fetch(postPath);
                 if (!response.ok) throw new Error('Failed to load post');
                 
                 const markdown = await response.text();
@@ -908,9 +927,20 @@
                 
             } catch (error) {
                 console.error('Error loading post:', error);
+                console.error('Attempted path:', postPath);
+                console.error('Current URL:', window.location.href);
                 document.getElementById('post-detail-content').innerHTML = `
                     <div class="error">
-                        <p>❌ 加载秘籍失败，请稍后重试</p>
+                        <p>❌ 加载秘籍失败</p>
+                        <p style="font-size:0.9rem;margin-top:10px;color:var(--text-muted);">
+                            可能原因：<br>
+                            1. 请确认已部署到 GitHub Pages<br>
+                            2. 请确认 posts 目录下的文件已提交<br>
+                            3. 请刷新页面重试
+                        </p>
+                        <p style="font-size:0.8rem;margin-top:10px;color:var(--text-muted);">
+                            尝试加载路径：${postPath}
+                        </p>
                         <button class="back-btn" onclick="showPostList()">← 返回秘籍列表</button>
                     </div>
                 `;
