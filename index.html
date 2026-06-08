@@ -1021,6 +1021,37 @@
             min-height: 140px;
         }
 
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .form-message {
+            padding: 12px 16px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .form-message.form-success {
+            background: rgba(76, 175, 80, 0.15);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            color: #81c784;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-message.form-error {
+            background: rgba(244, 67, 54, 0.15);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            color: #ef9a9a;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         footer {
             background: var(--bg-footer);
             padding: 32px 0;
@@ -1295,11 +1326,17 @@
                             <span>香港中文大学</span>
                         </div>
                     </div>
-                    <form class="contact-form">
-                        <input type="text" placeholder="尊姓大名">
-                        <input type="email" placeholder="联系方式">
-                        <textarea placeholder="请赐一言"></textarea>
-                        <button type="submit" class="btn btn-primary">发送书信</button>
+                    <form class="contact-form" id="guestbook-form" action="https://formspree.io/f/你的表单ID" method="POST">
+                        <input type="text" name="name" placeholder="尊姓大名" required>
+                        <input type="email" name="email" placeholder="联系方式（选填）">
+                        <textarea name="message" placeholder="请赐一言..." required></textarea>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="submit-btn">
+                                <span class="btn-text">发送书信</span>
+                                <span class="btn-loading" style="display:none;">传送中...</span>
+                            </button>
+                        </div>
+                        <div class="form-message" id="form-message"></div>
                     </form>
                 </div>
             </div>
@@ -1484,11 +1521,50 @@
                 });
             });
 
-            const form = document.querySelector('.contact-form');
-            form.addEventListener('submit', (e) => {
+            const form = document.getElementById('guestbook-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const formMessage = document.getElementById('form-message');
+
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                alert('感谢你的来信！我们江湖再见！');
-                form.reset();
+                
+                const btnText = submitBtn.querySelector('.btn-text');
+                const btnLoading = submitBtn.querySelector('.btn-loading');
+                
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline';
+                submitBtn.disabled = true;
+                
+                try {
+                    const response = await fetch(form.action, {
+                        method: form.method,
+                        body: new FormData(form),
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        formMessage.textContent = '✉️ 书信已发送！感谢你的留言，江湖再见！';
+                        formMessage.className = 'form-message form-success';
+                        form.reset();
+                    } else {
+                        formMessage.textContent = '❌ 发送失败，请稍后重试';
+                        formMessage.className = 'form-message form-error';
+                    }
+                } catch (error) {
+                    formMessage.textContent = '❌ 网络错误，请检查网络连接';
+                    formMessage.className = 'form-message form-error';
+                } finally {
+                    btnText.style.display = 'inline';
+                    btnLoading.style.display = 'none';
+                    submitBtn.disabled = false;
+                    
+                    setTimeout(() => {
+                        formMessage.textContent = '';
+                        formMessage.className = 'form-message';
+                    }, 5000);
+                }
             });
         });
     </script>
