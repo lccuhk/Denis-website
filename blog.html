@@ -879,13 +879,23 @@
                 return;
             }
             
+            let postPath = '';
             try {
-                const postPath = getPostPath(post.file);
+                postPath = getPostPath(post.file);
                 console.log('Loading post from:', postPath);
+                console.log('Current URL:', window.location.href);
+                
                 const response = await fetch(postPath);
-                if (!response.ok) throw new Error('Failed to load post');
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 
                 const markdown = await response.text();
+                console.log('Markdown loaded, length:', markdown.length);
+                
                 const { metadata, content } = parseMarkdown(markdown);
                 
                 // 配置 marked
@@ -923,6 +933,7 @@
                     <div class="error">
                         <p>❌ 加载秘籍失败</p>
                         <p style="font-size:0.9rem;margin-top:10px;color:var(--text-muted);">
+                            错误信息：${error.message}<br><br>
                             可能原因：<br>
                             1. 请确认已部署到 GitHub Pages<br>
                             2. 请确认 posts 目录下的文件已提交<br>
