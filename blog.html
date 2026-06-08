@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>武林秘籍 - 侠客江湖</title>
-    <base href="./">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -776,20 +775,11 @@
         let currentCategory = 'all';
         let currentPostId = null;
 
-        // 获取正确的基础路径（适配 GitHub Pages 子路径）
-        function getBasePath() {
-            const pathname = window.location.pathname;
-            // 如果在子路径下（如 /Denis-website/blog.html），返回子路径
-            if (pathname.includes('/') && pathname.lastIndexOf('/') > 0) {
-                return pathname.substring(0, pathname.lastIndexOf('/') + 1);
-            }
-            return './';
-        }
-
-        // 获取文章的完整路径
+        // 获取文章的完整路径（适配 GitHub Pages 子路径）
         function getPostPath(file) {
-            const basePath = getBasePath();
-            return basePath + file;
+            // 使用 URL API 自动处理相对路径
+            const url = new URL(file, window.location.href);
+            return url.pathname + url.search;
         }
 
         // 初始化
