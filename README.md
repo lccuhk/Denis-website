@@ -1,5 +1,20 @@
 # ⚔️ 侠客江湖 - 个人网站
 
+<p align="center">
+  <img src="https://img.shields.io/github/stars/lccuhk/Denis-website?style=for-the-badge&color=00D9FF" />
+  <img src="https://img.shields.io/github/forks/lccuhk/Denis-website?style=for-the-badge&color=00FF88" />
+  <img src="https://img.shields.io/github/issues/lccuhk/Denis-website?style=for-the-badge&color=FF6B6B" />
+  <img src="https://img.shields.io/github/license/lccuhk/Denis-website?style=for-the-badge&color=FFD93D" />
+  <img src="https://img.shields.io/github/last-commit/lccuhk/Denis-website?style=for-the-badge&color=9B59B6" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/🎨_主题-4种-purple?style=for-the-badge" />
+</p>
+
 一个具有侠客风格的个人主页网站，展示你的 GitHub 项目和个人信息，支持多个主题切换！
 
 ## ✨ 网站特色
