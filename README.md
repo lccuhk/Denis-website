@@ -31,7 +31,7 @@
 
 ```bash
 # 进入项目目录
-cd trading_agent_for_dscourse
+cd Denis-website
 
 # 启动本地服务器（Python 3）
 python3 -m http.server 8000
@@ -42,12 +42,12 @@ python3 -m http.server 8000
 ### 方法三：GitHub Pages
 
 1. 开启仓库的 GitHub Pages 功能
-2. 访问：`https://<your-username>.github.io/mini-pong-game/index.html`
+2. 访问：`https://<your-username>.github.io/Denis-website/index.html`
 
 ## 📁 项目结构
 
 ```
-trading_agent_for_dscourse/
+Denis-website/
 ├── index.html              # 主页
 ├── about.html              # 关于我
 ├── projects.html           # 项目展示
