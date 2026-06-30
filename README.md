@@ -23,6 +23,12 @@
 
 一个具有侠客风格的个人主页网站，展示你的 GitHub 项目和个人信息，支持多个主题切换！
 
+## 🖼️ 项目预览
+
+<p align="center">
+  <img src="docs/images/preview.svg" alt="Denis Website Preview" width="100%" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);" />
+</p>
+
 ## ✨ 网站特色
 
 - 🎨 **侠客主题系统**：四种精美主题 - 墨韵黑、侠义红、江湖蓝、侠客浅

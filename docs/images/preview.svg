@@ -1,0 +1,260 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f0f23;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffb347;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff8c00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="heroGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,215,0,0.1);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGradient)"/>
+
+  <!-- Decorative mountain silhouette -->
+  <path d="M0,700 L100,550 L200,620 L350,480 L500,580 L650,450 L800,550 L950,480 L1100,580 L1200,520 L1200,800 L0,800 Z" fill="#0a0a1a" opacity="0.8"/>
+  <path d="M0,750 L150,620 L300,680 L450,580 L600,650 L750,560 L900,640 L1050,580 L1200,660 L1200,800 L0,800 Z" fill="#0d0d1f" opacity="0.9"/>
+
+  <!-- Cloud decorations -->
+  <g opacity="0.3" fill="#ffd700">
+    <ellipse cx="150" cy="120" rx="60" ry="20"/>
+    <ellipse cx="200" cy="110" rx="50" ry="18"/>
+    <ellipse cx="1000" cy="100" rx="70" ry="22"/>
+    <ellipse cx="1080" cy="115" rx="55" ry="18"/>
+  </g>
+
+  <!-- Browser Window Frame -->
+  <rect x="40" y="40" width="1120" height="720" rx="12" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+  <rect x="40" y="40" width="1120" height="50" rx="12" fill="#161b22"/>
+  <rect x="40" y="40" width="1120" height="50" rx="12" fill="none" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Browser traffic lights -->
+  <circle cx="65" cy="65" r="8" fill="#ff5f56"/>
+  <circle cx="90" cy="65" r="8" fill="#ffbd2e"/>
+  <circle cx="115" cy="65" r="8" fill="#27c93f"/>
+
+  <!-- Browser URL bar -->
+  <rect x="150" y="55" width="900" height="30" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="165" y="75" font-family="monospace" font-size="13" fill="#8b949e">https://lccuhk.github.io/Denis-website/</text>
+
+  <!-- Navigation Bar -->
+  <rect x="40" y="90" width="1120" height="60" fill="#0d1117" opacity="0.95"/>
+  <text x="70" y="128" font-family="'Noto Serif SC', serif" font-size="24" fill="url(#goldGradient)" font-weight="bold">⚔️ 侠客江湖</text>
+
+  <!-- Nav links -->
+  <g font-family="'Noto Serif SC', serif" font-size="16">
+    <text x="700" y="128" fill="#ffd700">首页</text>
+    <text x="780" y="128" fill="#c9d1d9">关于我</text>
+    <text x="870" y="128" fill="#c9d1d9">项目展示</text>
+    <text x="980" y="128" fill="#c9d1d9">博客</text>
+  </g>
+
+  <!-- Theme switcher -->
+  <rect x="1070" y="105" width="70" height="30" rx="15" fill="#21262d" stroke="#ffd700" stroke-width="1"/>
+  <circle cx="1085" cy="120" r="8" fill="#1a1a2e" stroke="#ffd700" stroke-width="1"/>
+  <circle cx="1105" cy="120" r="8" fill="#c41e3a"/>
+  <circle cx="1125" cy="120" r="8" fill="#1e90ff"/>
+
+  <!-- Hero Section -->
+  <rect x="40" y="150" width="1120" height="350" fill="url(#heroGradient)"/>
+
+  <!-- Hero content -->
+  <g transform="translate(80, 220)">
+    <!-- Swordsman silhouette -->
+    <g filter="url(#softGlow)">
+      <!-- Body -->
+      <ellipse cx="0" cy="80" rx="35" ry="60" fill="#1a1a2e" stroke="#ffd700" stroke-width="2"/>
+      <!-- Head -->
+      <circle cx="0" cy="0" r="30" fill="#1a1a2e" stroke="#ffd700" stroke-width="2"/>
+      <!-- Topknot -->
+      <ellipse cx="0" cy="-30" rx="15" ry="20" fill="#ffd700" opacity="0.8"/>
+      <!-- Eyes -->
+      <circle cx="-10" cy="-5" r="3" fill="#ffd700"/>
+      <circle cx="10" cy="-5" r="3" fill="#ffd700"/>
+      <!-- Cape -->
+      <path d="M-35,50 Q-60,100 -40,150 L-20,130 Q-25,90 -30,60 Z" fill="#c41e3a" opacity="0.9"/>
+      <path d="M35,50 Q60,100 40,150 L20,130 Q25,90 30,60 Z" fill="#c41e3a" opacity="0.9"/>
+      <!-- Sword -->
+      <rect x="40" y="-20" width="8" height="120" rx="2" fill="#c0c0c0" stroke="#808080" stroke-width="1"/>
+      <rect x="36" y="95" width="16" height="8" rx="2" fill="#ffd700"/>
+      <rect x="38" y="100" width="12" height="25" rx="2" fill="#8b4513"/>
+    </g>
+  </g>
+
+  <!-- Hero text -->
+  <g transform="translate(250, 230)">
+    <text x="0" y="0" font-family="'Noto Serif SC', serif" font-size="42" fill="url(#goldGradient)" font-weight="bold" filter="url(#glow)"> Denis LU</text>
+    <text x="0" y="45" font-family="'Noto Serif SC', serif" font-size="20" fill="#c9d1d9">| 全栈开发者 | 强化学习研究者 | 江湖侠客 |</text>
+
+    <!-- Description -->
+    <text x="0" y="90" font-family="'Noto Serif SC', sans-serif" font-size="16" fill="#8b949e">
+      十步杀一人，千里不留行。事了拂衣去，深藏身与名。
+    </text>
+    <text x="0" y="115" font-family="'Noto Serif SC', sans-serif" font-size="16" fill="#8b949e">
+      热爱技术，追求卓越，在代码的江湖中快意恩仇。
+    </text>
+
+    <!-- Stats -->
+    <g transform="translate(0, 150)">
+      <rect x="0" y="0" width="120" height="50" rx="8" fill="#21262d" stroke="#ffd700" stroke-width="1" opacity="0.8"/>
+      <text x="60" y="25" text-anchor="middle" font-family="monospace" font-size="20" fill="#ffd700" font-weight="bold">30+</text>
+      <text x="60" y="42" text-anchor="middle" font-family="'Noto Serif SC', serif" font-size="11" fill="#8b949e">开源项目</text>
+
+      <rect x="140" y="0" width="120" height="50" rx="8" fill="#21262d" stroke="#ffd700" stroke-width="1" opacity="0.8"/>
+      <text x="200" y="25" text-anchor="middle" font-family="monospace" font-size="20" fill="#ffd700" font-weight="bold">500+</text>
+      <text x="200" y="42" text-anchor="middle" font-family="'Noto Serif SC', serif" font-size="11" fill="#8b949e">GitHub Stars</text>
+
+      <rect x="280" y="0" width="120" height="50" rx="8" fill="#21262d" stroke="#ffd700" stroke-width="1" opacity="0.8"/>
+      <text x="340" y="25" text-anchor="middle" font-family="monospace" font-size="20" fill="#ffd700" font-weight="bold">5年</text>
+      <text x="340" y="42" text-anchor="middle" font-family="'Noto Serif SC', serif" font-size="11" fill="#8b949e">编程经验</text>
+    </g>
+  </g>
+
+  <!-- Theme Preview Section -->
+  <g transform="translate(800, 200)">
+    <text x="0" y="0" font-family="'Noto Serif SC', serif" font-size="18" fill="#ffd700" font-weight="bold">🎨 主题切换</text>
+
+    <!-- Theme cards -->
+    <g transform="translate(0, 20)">
+      <!-- 墨韵黑 -->
+      <rect x="0" y="0" width="100" height="80" rx="6" fill="#1a1a2e" stroke="#ffd700" stroke-width="2"/>
+      <rect x="10" y="15" width="80" height="8" rx="2" fill="#ffd700"/>
+      <rect x="10" y="30" width="60" height="5" rx="2" fill="#333"/>
+      <rect x="10" y="40" width="70" height="5" rx="2" fill="#333"/>
+      <rect x="10" y="50" width="50" height="5" rx="2" fill="#333"/>
+      <text x="50" y="72" text-anchor="middle" font-family="'Noto Serif SC', serif" font-size="10" fill="#ffd700">墨韵黑</text>
+
+      <!-- 侠义红 -->
+      <rect x="115" y="0" width="100" height="80" rx="6" fill="#2d1f1f" stroke="#c41e3a" stroke-width="1"/>
+      <rect x="125" y="15" width="80" height="8" rx="2" fill="#c41e3a"/>
+      <rect x="125" y="30" width="60" height="5" rx="2" fill="#442222"/>
+      <rect x="125" y="40" width="70" height="5" rx="2" fill="#442222"/>
+      <rect x="125" y="50" width="50" height="5" rx="2" fill="#442222"/>
+      <text x="165" y="72" text-anchor="middle" font-family="'Noto Serif SC', serif" font-size="10" fill="#c41e3a">侠义红</text>
+
+      <!-- 江湖蓝 -->
+      <rect x="230" y="0" width="100" height="80" rx="6" fill="#1a2634" stroke="#1e90ff" stroke-width="1"/>
+      <rect x="240" y="15" width="80" height="8" rx="2" fill="#1e90ff"/>
+      <rect x="240" y="30" width="60" height="5" rx="2" fill="#223344"/>
+      <rect x="240" y="40" width="70" height="5" rx="2" fill="#223344"/>
+      <rect x="240" y="50" width="50" height="5" rx="2" fill="#223344"/>
+      <text x="280" y="72" text-anchor="middle" font-family="'Noto Serif SC', serif" font-size="10" fill="#1e90ff">江湖蓝</text>
+
+      <!-- 侠客浅 -->
+      <rect x="0" y="95" width="100" height="80" rx="6" fill="#f5f0e6" stroke="#8b4513" stroke-width="1"/>
+      <rect x="10" y="110" width="80" height="8" rx="2" fill="#8b4513"/>
+      <rect x="10" y="125" width="60" height="5" rx="2" fill="#d4c4a8"/>
+      <rect x="10" y="135" width="70" height="5" rx="2" fill="#d4c4a8"/>
+      <rect x="10" y="145" width="50" height="5" rx="2" fill="#d4c4a8"/>
+      <text x="50" y="167" text-anchor="middle" font-family="'Noto Serif SC', serif" font-size="10" fill="#8b4513">侠客浅</text>
+    </g>
+  </g>
+
+  <!-- Projects Section -->
+  <rect x="40" y="500" width="1120" height="260" fill="#0d1117" opacity="0.9"/>
+
+  <text x="70" y="545" font-family="'Noto Serif SC', serif" font-size="24" fill="url(#goldGradient)" font-weight="bold">📦 精选项目</text>
+
+  <!-- Project cards -->
+  <g transform="translate(70, 565)">
+    <!-- Card 1: RL-Doraemon -->
+    <rect x="0" y="0" width="250" height="160" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1">
+      <animate attributeName="stroke" values="#30363d;#ffd700;#30363d" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <text x="15" y="30" font-family="'Noto Serif SC', serif" font-size="16" fill="#ffd700" font-weight="bold">🀄 RL-Doraemon</text>
+    <text x="15" y="52" font-family="sans-serif" font-size="12" fill="#8b949e">深度强化学习麻将AI</text>
+    <rect x="15" y="65" width="60" height="20" rx="4" fill="#21262d"/>
+    <text x="45" y="79" text-anchor="middle" font-family="monospace" font-size="10" fill="#ff6b6b">PyTorch</text>
+    <rect x="85" y="65" width="50" height="20" rx="4" fill="#21262d"/>
+    <text x="110" y="79" text-anchor="middle" font-family="monospace" font-size="10" fill="#00ff88">RL</text>
+    <rect x="15" y="95" width="220" height="50" rx="4" fill="#0d1117"/>
+    <text x="25" y="115" font-family="monospace" font-size="10" fill="#3fb950">>>> 训练中...</text>
+    <text x="25" y="132" font-family="monospace" font-size="9" fill="#8b949e">胜率: 72.3% | 探索率: 0.05</text>
+
+    <!-- Card 2: AI Trader -->
+    <rect x="270" y="0" width="250" height="160" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+    <text x="285" y="30" font-family="'Noto Serif SC', serif" font-size="16" fill="#ffd700" font-weight="bold">📈 AI-Trader</text>
+    <text x="285" y="52" font-family="sans-serif" font-size="12" fill="#8b949e">智能交易助手平台</text>
+    <rect x="285" y="65" width="60" height="20" rx="4" fill="#21262d"/>
+    <text x="315" y="79" text-anchor="middle" font-family="monospace" font-size="10" fill="#3776ab">Python</text>
+    <rect x="355" y="65" width="50" height="20" rx="4" fill="#21262d"/>
+    <text x="380" y="79" text-anchor="middle" font-family="monospace" font-size="10" fill="#4fc08d">Vue</text>
+    <rect x="285" y="95" width="220" height="50" rx="4" fill="#0d1117"/>
+    <polyline points="295,135 315,125 335,130 355,110 375,115 395,100 415,105 435,90 455,95 475,85 495,92" fill="none" stroke="#3fb950" stroke-width="2"/>
+    <text x="470" y="135" font-family="monospace" font-size="10" fill="#3fb950">+12.5%</text>
+
+    <!-- Card 3: Humanoid RL -->
+    <rect x="540" y="0" width="250" height="160" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+    <text x="555" y="30" font-family="'Noto Serif SC', serif" font-size="16" fill="#ffd700" font-weight="bold">🤖 Humanoid RL</text>
+    <text x="555" y="52" font-family="sans-serif" font-size="12" fill="#8b949e">机器人强化学习</text>
+    <rect x="555" y="65" width="70" height="20" rx="4" fill="#21262d"/>
+    <text x="590" y="79" text-anchor="middle" font-family="monospace" font-size="10" fill="#00d9ff">MuJoCo</text>
+    <rect x="635" y="65" width="55" height="20" rx="4" fill="#21262d"/>
+    <text x="662" y="79" text-anchor="middle" font-family="monospace" font-size="10" fill="#ff6b6b">PPO</text>
+    <rect x="555" y="95" width="220" height="50" rx="4" fill="#0d1117"/>
+    <!-- Simple robot figure -->
+    <circle cx="580" cy="115" r="10" fill="#c0c0c0"/>
+    <rect x="575" y="125" width="10" height="20" fill="#c0c0c0"/>
+    <line x1="575" y1="130" x2="565" y2="140" stroke="#c0c0c0" stroke-width="3"/>
+    <line x1="585" y1="130" x2="595" y2="140" stroke="#c0c0c0" stroke-width="3"/>
+    <text x="620" y="115" font-family="monospace" font-size="10" fill="#00d9ff">速度: 2.3m/s</text>
+    <text x="620" y="132" font-family="monospace" font-size="10" fill="#3fb950">成功率: 94%</text>
+
+    <!-- Card 4: Couple Mini Game -->
+    <rect x="810" y="0" width="250" height="160" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+    <text x="825" y="30" font-family="'Noto Serif SC', serif" font-size="16" fill="#ffd700" font-weight="bold">🎮 双人小游戏</text>
+    <text x="825" y="52" font-family="sans-serif" font-size="12" fill="#8b949e">40+款本地对战游戏</text>
+    <rect x="825" y="65" width="70" height="20" rx="4" fill="#21262d"/>
+    <text x="860" y="79" text-anchor="middle" font-family="monospace" font-size="10" fill="#e34f26">HTML5</text>
+    <rect x="905" y="65" width="55" height="20" rx="4" fill="#21262d"/>
+    <text x="932" y="79" text-anchor="middle" font-family="monospace" font-size="10" fill="#ff6b9d">41款</text>
+    <rect x="825" y="95" width="220" height="50" rx="4" fill="#0d1117"/>
+    <!-- Game icons -->
+    <circle cx="850" cy="120" r="12" fill="#ff6b6b" opacity="0.8"/>
+    <text x="850" y="124" text-anchor="middle" font-size="12">🏓</text>
+    <circle cx="890" cy="120" r="12" fill="#4ecdc4" opacity="0.8"/>
+    <text x="890" y="124" text-anchor="middle" font-size="12">❌</text>
+    <circle cx="930" cy="120" r="12" fill="#ffe66d" opacity="0.8"/>
+    <text x="930" y="124" text-anchor="middle" font-size="12">🐍</text>
+    <circle cx="970" cy="120" r="12" fill="#95e1d3" opacity="0.8"/>
+    <text x="970" y="124" text-anchor="middle" font-size="12">⚔️</text>
+    <circle cx="1010" cy="120" r="12" fill="#f38181" opacity="0.8"/>
+    <text x="1010" y="124" text-anchor="middle" font-size="12">🎯</text>
+  </g>
+
+  <!-- Decorative elements -->
+  <g opacity="0.15" fill="#ffd700">
+    <!-- Sword decoration left -->
+    <path d="M30,400 L30,350 L25,345 L35,340 L45,345 L40,350 L40,400 Z"/>
+    <!-- Sword decoration right -->
+    <path d="M1170,400 L1170,350 L1165,345 L1175,340 L1185,345 L1180,350 L1180,400 Z"/>
+  </g>
+
+  <!-- Footer -->
+  <rect x="40" y="730" width="1120" height="30" fill="#0d1117"/>
+  <text x="600" y="750" text-anchor="middle" font-family="'Noto Serif SC', serif" font-size="12" fill="#8b949e">
+    © 2024 侠客江湖 | 以剑会友，以代码证道
+  </text>
+</svg>
