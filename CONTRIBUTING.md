@@ -75,6 +75,254 @@ npx prettier --write .
 npx prettier --check .
 ```
 
+## 代码风格指南
+
+### Git 提交规范
+
+我们遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**提交类型（type）：**
+- `feat` - 新功能、新页面
+- `fix` - Bug 修复
+- `docs` - 文档更新
+- `style` - 代码格式（不影响代码运行）
+- `refactor` - 重构（既不是新增功能，也不是修改 bug）
+- `perf` - 性能优化
+- `test` - 增加测试
+- `chore` - 构建过程或辅助工具的变动
+- `ci` - CI/CD 配置变更
+- `revert` - 回退提交
+
+**示例：**
+```
+feat(about): add skills section with animation
+
+- Add skills showcase section
+- Implement progress bar animations
+- Add responsive layout for mobile
+- Update README with new feature
+
+Closes #123
+```
+
+**提交规范：**
+- 标题不超过 72 个字符
+- 使用中文或英文均可，但要保持一致
+- 标题使用祈使句（"添加" 而不是 "添加了"）
+- 正文详细说明改动的原因和内容
+- 关联相关 Issue（如 `Closes #123`、`Fixes #456`）
+
+### 命名约定
+
+#### JavaScript
+```javascript
+// 变量/函数 - camelCase
+const userName = 'Denis'
+let currentSection = 'home'
+
+function scrollToSection(sectionId) {
+  // ...
+}
+
+// 常量 - UPPER_SNAKE_CASE
+const NAV_ITEMS = ['home', 'about', 'projects', 'contact']
+const ANIMATION_DURATION = 300
+const BREAKPOINT_MOBILE = 768
+
+// 类名 - PascalCase
+class TypeWriter {
+  constructor(element, options) {
+    this.element = element
+  }
+}
+```
+
+#### HTML/CSS
+```html
+<!-- 类名 - kebab-case，语义化命名 -->
+<header class="site-header">
+  <nav class="main-nav">
+    <ul class="nav-list">
+      <li class="nav-item"><a href="#home">首页</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="main-content">
+  <section class="hero-section">
+    <h1 class="hero-title">...</h1>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-content">...</div>
+</footer>
+```
+
+```css
+/* BEM 命名规范 */
+.site-header { }                /* Block */
+.site-header__logo { }          /* Element */
+.site-header--sticky { }        /* Modifier */
+
+/* 状态类 */
+.is-active { }
+.is-visible { }
+.is-hidden { }
+.is-loading { }
+
+/* 工具类 */
+.text-center { }
+.container { }
+.flex { }
+```
+
+#### 文件命名
+```
+# HTML 页面 - kebab-case
+index.html
+about.html
+projects.html
+
+# 样式文件 - kebab-case
+main.css
+hero-section.css
+responsive.css
+
+# 脚本文件 - camelCase
+main.js
+typeWriter.js
+scrollAnimation.js
+
+# 图片资源 - kebab-case
+profile-photo.jpg
+project-thumbnail.svg
+icon-github.png
+```
+
+### 注释规范
+
+#### JavaScript 注释
+```javascript
+/**
+ * 打字机效果类
+ * @param {HTMLElement} element - 目标元素
+ * @param {Object} options - 配置选项
+ * @param {number} options.speed - 打字速度（毫秒）
+ * @param {string[]} options.texts - 要显示的文本数组
+ * @example
+ * const tw = new TypeWriter(element, { speed: 100, texts: ['Hello', 'World'] })
+ * tw.start()
+ */
+class TypeWriter {
+  constructor(element, options) {
+    // ...
+  }
+}
+
+// ✅ 好的注释 - 解释为什么这样做
+// 使用 requestAnimationFrame 实现平滑滚动，避免 setInterval 的抖动
+function smoothScrollTo(targetY) {
+  // ...
+}
+
+// ✅ 好的注释 - 解释浏览器兼容性
+// 使用 IntersectionObserver 实现滚动动画，降级到 scroll 事件监听
+if ('IntersectionObserver' in window) {
+  // 现代浏览器
+} else {
+  // 降级方案
+}
+
+// ❌ 不好的注释 - 重复代码内容
+// 定义变量
+let count = 0
+```
+
+#### HTML 注释
+```html
+<!-- ✅ 好的注释 - 说明区块用途 -->
+<!-- 页面头部导航 -->
+<header class="site-header">...</header>
+
+<!-- 主要内容区域 -->
+<main class="main-content">...</main>
+
+<!-- 页脚 -->
+<footer class="site-footer">...</footer>
+```
+
+### 性能优化规范
+
+```javascript
+// ✅ 缓存 DOM 查询
+const header = document.querySelector('.site-header')
+const navItems = document.querySelectorAll('.nav-item')
+
+// ✅ 使用事件委托
+document.querySelector('.nav-list').addEventListener('click', (e) => {
+  if (e.target.matches('.nav-item a')) {
+    // 处理点击
+  }
+})
+
+// ✅ 防抖函数
+function debounce(func, wait) {
+  let timeout
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout)
+      func(...args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+  }
+}
+
+// ✅ 使用 CSS 动画代替 JS 动画
+.element {
+  transition: transform 0.3s ease;
+}
+.element:hover {
+  transform: translateY(-5px);
+}
+```
+
+### 可访问性规范
+
+```html
+<!-- ✅ 语义化 HTML -->
+<header>
+  <nav aria-label="主导航">
+    <ul role="menubar">
+      <li role="menuitem"><a href="#home">首页</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section aria-labelledby="about-title">
+    <h2 id="about-title">关于我</h2>
+  </section>
+</main>
+
+<!-- ✅ 图片 alt 文本 -->
+<img src="profile.jpg" alt="Denis 的个人照片" />
+
+<!-- ✅ 按钮有明确的文本或 aria-label -->
+<button aria-label="关闭菜单" class="menu-toggle">
+  <span class="icon"></span>
+</button>
+```
+
 ## 开发环境
 
 本项目是纯前端项目，无需复杂的开发环境：
