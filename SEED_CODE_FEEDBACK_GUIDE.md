@@ -49,6 +49,23 @@
 
 ---
 
+## 👤 我的可用模型
+
+根据你的 Relay 账号，你能访问的模型：
+
+| 模型名称 | Model ID | 类型 | 参与活动 | 推荐度 |
+|----------|----------|------|----------|--------|
+| **experimental_0717** | `model_api/experimental_0717` | Model API | ✅ 可以 | ⭐⭐⭐⭐⭐ 首选 |
+| **alwaysday1** | `auto_model/alwaysday1` | Auto Model | ✅ 可以 | ⭐⭐⭐⭐ 备选 |
+| experimental_0630 | `model_api/experimental_0630` | Model API | ⚠️ 不在活动列表 | ⭐⭐ |
+| glm5.2 | `opensource/glm5.2` | Open Source | ❌ 不计入 | ⭐ |
+
+**推荐使用顺序：**
+1. 🥇 `model_api/experimental_0717` - 最新实验模型，优先奖励
+2. 🥈 `auto_model/alwaysday1` - 备选模型
+
+---
+
 ## 🔧 环境配置
 
 ### 方式一：环境变量（推荐）

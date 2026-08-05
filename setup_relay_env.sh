@@ -21,12 +21,12 @@ export RELAY_BASE_URL="https://super-relay.byted.org"
 export RELAY_API_KEY="YOUR_API_KEY_HERE"
 
 # 你要使用的模型 ID
-# 可选模型:
-#   - model_api/experimental_0717
-#   - model_api/experimental_0723
-#   - auto_model/alwaysday1
-#   - auto_model/alwaysday1_max
-export RELAY_MODEL_ID="model_api/experimental_0723"
+# 你能访问的模型:
+#   - model_api/experimental_0717  ⭐ 推荐（最新实验模型）
+#   - auto_model/alwaysday1        （备选）
+#   - model_api/experimental_0630  （不在活动列表）
+#   - opensource/glm5.2            （开源模型，不计入）
+export RELAY_MODEL_ID="model_api/experimental_0717"
 
 # ============================================================
 # 👆 配置结束 👆
