@@ -351,7 +351,8 @@
             </div>
             <div class="contact-wrap reveal reveal-d1">
                 <p>若有任何事宜，或欲切磋技艺，欢迎随时传信！</p>
-                <form id="guestbook-form" action="https://formspree.io/f/你的表单ID" method="POST">
+                <form id="guestbook-form" action="https://formsubmit.co/ajax/lu_chang_mail@163.com" method="POST">
+                    <input type="text" name="_honey" id="g-honey" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" aria-hidden="true">
                     <div class="field">
                         <label for="g-name">侠客名号</label>
                         <input id="g-name" type="text" name="name" placeholder="如何称呼阁下？" required>
@@ -365,6 +366,9 @@
                 </form>
                 <p class="muted" style="margin-top:26px;font-size:.9rem;">
                     亦可前往 <a href="https://github.com/lccuhk" target="_blank" rel="noopener noreferrer">GitHub</a> 寻我
+                </p>
+                <p class="muted" style="margin-top:10px;font-size:.8rem;line-height:1.7;">
+                    首次使用时，Formsubmit 会向收件邮箱发送一封激活邮件，点击其中链接后留言才会正式送达，之后无需再次激活。
                 </p>
             </div>
         </section>
@@ -447,16 +451,31 @@
             submitBtn.disabled = true;
             submitBtn.textContent = '传送中…';
             try {
+                // 用 ID 取值（避免 form.name 与表单原生 name 属性冲突）
+                const payload = {
+                    name: document.getElementById('g-name').value.trim(),
+                    message: document.getElementById('g-msg').value.trim(),
+                    _honey: document.getElementById('g-honey').value,
+                    _subject: '侠客江湖 · 新飞鸽传书',
+                    _template: 'table',
+                    _captcha: 'false'
+                };
                 const res = await fetch(form.action, {
-                    method: 'POST', body: new FormData(form),
-                    headers: { 'Accept': 'application/json' }
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
-                if (res.ok) {
+                const data = await res.json().catch(() => ({}));
+                if (res.ok && data.success === 'true') {
                     formMsg.textContent = '✉️ 书信已发送！感谢留言，江湖再见！';
                     formMsg.className = 'form-msg ok';
                     form.reset();
+                } else if (data.message) {
+                    // Formsubmit 首次未激活等场景会回传说明
+                    formMsg.textContent = '⚠️ ' + data.message;
+                    formMsg.className = 'form-msg err';
                 } else {
-                    formMsg.textContent = '❌ 发送失败，请稍后重试（需先配置 Formspree 表单 ID）';
+                    formMsg.textContent = '❌ 发送失败，请稍后重试';
                     formMsg.className = 'form-msg err';
                 }
             } catch (err) {
@@ -465,7 +484,7 @@
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = '发送书信';
-                setTimeout(() => { formMsg.textContent = ''; formMsg.className = 'form-msg'; }, 6000);
+                setTimeout(() => { formMsg.textContent = ''; formMsg.className = 'form-msg'; }, 8000);
             }
         });
     </script>
