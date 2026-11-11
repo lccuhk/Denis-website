@@ -3,1328 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>武林秘籍 - 侠客江湖</title>
+    <title>武林秘籍 · Denis LU 的档案馆</title>
+    <meta name="description" content="Denis LU 的武林秘籍档案馆 —— 以 Markdown 卷宗记录代码江湖的修行心得。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wuxia.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        :root {
-            --primary: #c4a35a;
-            --primary-dark: #8b6914;
-            --primary-light: #d4b36a;
-            --bg-primary: #1a0f0a;
-            --bg-secondary: #2d1810;
-            --bg-tertiary: #4a281a;
-            --text-primary: #f5e6d3;
-            --text-secondary: #d4c4a8;
-            --text-muted: #9a8a6a;
-            --border-color: rgba(196, 163, 90, 0.3);
-            --bg-overlay: rgba(0, 0, 0, 0.4);
-            --bg-card: rgba(196, 163, 90, 0.08);
-            --bg-nav: linear-gradient(180deg, rgba(26, 15, 10, 0.98) 0%, rgba(26, 15, 10, 0.85) 100%);
-            --bg-footer: rgba(0, 0, 0, 0.4);
-            --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M10 40 Q20 20 40 40 Q60 60 70 40' stroke='%23c4a35a' stroke-width='0.3' fill='none' opacity='0.08'/%3E%3C/svg%3E");
+        /* 分类检索 */
+        .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .chip {
+            font-family: var(--font-kai);
+            padding: 8px 20px; letter-spacing: 3px; font-size: .9rem;
+            color: var(--primary); background: rgba(196,163,90,.07);
+            border: 1px solid var(--border-color); border-radius: 30px;
+            cursor: pointer; transition: all .28s ease;
         }
+        .chip:hover { transform: translateY(-2px); border-color: var(--primary); }
+        .chip.active { color: var(--bg-primary); background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-color: var(--primary); }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* 秘籍卷宗卡 */
+        .scroll-card { display: block; color: inherit; cursor: pointer; }
+        .scroll-cat {
+            display: inline-block; font-size: .78rem; letter-spacing: 3px;
+            color: var(--seal); border: 1px solid rgba(179,50,42,.4);
+            padding: 2px 12px; border-radius: 3px; margin-bottom: 14px;
+            background: rgba(179,50,42,.06);
         }
+        .scroll-title { font-family: var(--font-brush); font-size: 1.5rem; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 10px; }
+        .scroll-excerpt { color: var(--text-secondary); font-size: .95rem; min-height: 72px; }
+        .scroll-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--paper-edge); font-size: .83rem; color: var(--text-muted); }
+        .scroll-likes { margin-left: auto; }
+        .scroll-likes.liked { color: var(--seal); }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Noto Serif SC', 'Ma Shan Zheng', 'STKaiti', 'KaiTi', 'Songti SC', 'SimSun', serif;
-            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
-            min-height: 100vh;
-            color: var(--text-primary);
-            line-height: 1.8;
-            position: relative;
-            overflow-x: hidden;
-            transition: background 0.4s ease, color 0.4s ease;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: var(--bg-pattern);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        [data-theme="light"] body::after {
-            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.1) 100%);
-        }
-
-        .theme-toggle {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: 2px solid var(--primary);
-            color: var(--bg-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            z-index: 9999;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        }
-
-        .theme-panel {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            background: var(--bg-card);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            z-index: 9999;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            display: none;
-            animation: slideUp 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .theme-panel.active {
-            display: block;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .theme-panel-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .theme-options {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .theme-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-        .theme-option:hover {
-            background: var(--bg-card);
-            border-color: var(--border-color);
-        }
-
-        .theme-option.active {
-            background: var(--bg-card);
-            border-color: var(--primary);
-        }
-
-        .theme-color {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid var(--border-color);
-        }
-
-        .theme-name {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .theme-label {
-            position: fixed;
-            bottom: 95px;
-            right: 30px;
-            background: var(--bg-card);
-            color: var(--text-primary);
-            padding: 6px 12px;
+        /* 文章详情（展开的卷宗） */
+        .detail-back { margin-bottom: 26px; }
+        .scroll-detail {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)),
+                var(--paper);
+            border: 1px solid var(--paper-edge);
             border-radius: 6px;
-            font-size: 0.85rem;
-            border: 1px solid var(--border-color);
-            z-index: 9998;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-
-        .theme-toggle:hover + .theme-label {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-nav);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            padding: clamp(28px, 5vw, 60px);
             position: relative;
         }
+        .detail-head { text-align: center; margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--paper-edge); }
+        .detail-title { font-family: var(--font-brush); font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: 4px; margin: 16px 0 14px; color: var(--text-primary); }
+        .detail-meta { color: var(--text-muted); font-size: .88rem; letter-spacing: 2px; }
+        .detail-tags { margin-top: 14px; }
 
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--primary);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after,
-        .nav-links a.active::after {
-            width: 100%;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 120px 30px 60px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            text-align: center;
-            color: var(--primary);
-            margin-bottom: 50px;
-            position: relative;
-            padding-bottom: 20px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-        }
-
-        .blog-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .blog-header h1 {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-
-        .blog-header p {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .blog-filters {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 10px 24px;
-            background: transparent;
-            border: 2px solid var(--border-color);
-            color: var(--text-secondary);
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: var(--bg-primary);
-        }
-
-        .posts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        .post-card {
-            background: var(--bg-card);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 30px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .post-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary);
-            box-shadow: 0 12px 40px rgba(196, 163, 90, 0.2);
-        }
-
-        .post-category {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--primary);
-            color: var(--bg-primary);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-bottom: 15px;
-        }
-
-        .post-title {
-            font-size: 1.4rem;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .post-excerpt {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            line-height: 1.7;
-        }
-
-        .post-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .post-date {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .post-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .post-tag {
-            padding: 2px 8px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .post-detail {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 1rem;
-            margin-bottom: 30px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-family: inherit;
-        }
-
-        .back-btn:hover {
-            transform: translateX(-5px);
-        }
-
-        .post-detail-header {
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .post-detail-title {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            line-height: 1.3;
-        }
-
-        .post-detail-meta {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .post-detail-category {
-            padding: 6px 16px;
-            background: var(--primary);
-            color: var(--bg-primary);
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        .post-detail-date {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .post-detail-tags {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .post-detail-tag {
-            padding: 4px 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .post-content {
-            font-size: 1.05rem;
-            line-height: 2;
-        }
-
-        .post-content h1,
-        .post-content h2,
-        .post-content h3,
-        .post-content h4 {
-            color: var(--primary);
-            margin-top: 40px;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .post-content h1 {
-            font-size: 2rem;
-        }
-
-        .post-content h2 {
-            font-size: 1.6rem;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .post-content h3 {
-            font-size: 1.3rem;
-        }
-
-        .post-content p {
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-
-        .post-content a {
-            color: var(--primary);
-            text-decoration: none;
-            border-bottom: 1px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .post-content a:hover {
-            background: var(--primary);
-            color: var(--bg-primary);
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-
-        .post-content ul,
-        .post-content ol {
-            margin-bottom: 20px;
-            padding-left: 30px;
-        }
-
-        .post-content li {
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
+        .post-content { font-size: 1.04rem; color: var(--text-secondary); }
+        .post-content h1, .post-content h2, .post-content h3 { font-family: var(--font-brush); color: var(--primary-light); letter-spacing: 2px; margin: 38px 0 16px; }
+        .post-content h1 { font-size: 2rem; } .post-content h2 { font-size: 1.6rem; } .post-content h3 { font-size: 1.3rem; }
+        .post-content p { margin: 18px 0; }
+        .post-content ul, .post-content ol { margin: 18px 0; padding-left: 26px; }
+        .post-content li { margin: 8px 0; }
+        .post-content a { color: var(--primary); border-bottom: 1px solid var(--paper-edge); }
+        .post-content a:hover { color: var(--primary-light); }
         .post-content blockquote {
-            border-left: 4px solid var(--primary);
-            padding: 15px 20px;
-            margin: 30px 0;
-            background: var(--bg-card);
-            border-radius: 0 8px 8px 0;
-            font-style: italic;
-            color: var(--text-secondary);
+            border-left: 3px solid var(--primary); background: var(--bg-card);
+            padding: 14px 22px; margin: 26px 0; border-radius: 0 6px 6px 0;
+            color: var(--text-primary); font-style: italic;
         }
-
         .post-content code {
-            background: var(--bg-card);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            color: var(--primary-light);
-            border: 1px solid var(--border-color);
+            background: var(--bg-card); border: 1px solid var(--paper-edge);
+            padding: 2px 7px; border-radius: 4px; font-family: 'Courier New', monospace;
+            font-size: .88em; color: var(--primary-light);
         }
+        .post-content pre { background: var(--bg-card); border: 1px solid var(--paper-edge); border-radius: 8px; padding: 20px; overflow-x: auto; margin: 24px 0; }
+        .post-content pre code { background: none; border: none; padding: 0; color: var(--text-primary); }
+        .post-content hr { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border-color), transparent); margin: 38px 0; }
+        .post-content strong { color: var(--primary-light); }
+        .post-content table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+        .post-content th, .post-content td { border: 1px solid var(--paper-edge); padding: 10px 14px; text-align: left; }
+        .post-content th { background: var(--bg-card); color: var(--primary-light); }
+        .post-content img { border-radius: 8px; border: 1px solid var(--paper-edge); }
 
-        .post-content pre {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 25px 0;
-            border: 1px solid var(--border-color);
-        }
-
-        .post-content pre code {
-            background: none;
-            padding: 0;
-            border: none;
-            color: var(--text-primary);
-        }
-
-        .post-content hr {
-            border: none;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
-            margin: 40px 0;
-        }
-
-        .post-content strong {
-            color: var(--primary-light);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: var(--text-muted);
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error {
-            text-align: center;
-            padding: 60px;
-            color: #ef9a9a;
-        }
-
-        footer {
-            background: var(--bg-footer);
-            padding: 32px 0;
-            text-align: center;
-            border-top: 2px solid var(--border-color);
-            position: relative;
-            z-index: 2;
-        }
-
-        footer p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .footer-links a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--primary-light);
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-            .nav-container {
-                padding: 15px 20px;
-            }
-
-            .logo {
-                font-size: 1.2rem;
-            }
-
-            .nav-links {
-                gap: 15px;
-            }
-
-            .nav-links a {
-                font-size: 0.9rem;
-            }
-
-            .container {
-                padding: 100px 20px 40px;
-            }
-
-            .blog-header h1 {
-                font-size: 2rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-
-            .post-detail-title {
-                font-size: 1.8rem;
-            }
-
-            .posts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* 点赞功能样式 */
-        .like-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            padding: 40px 0;
-            margin-top: 40px;
-            border-top: 2px solid var(--border-color);
-            border-bottom: 2px solid var(--border-color);
-        }
-
+        /* 点赞 */
+        .like-section { display: flex; justify-content: center; margin-top: 44px; padding-top: 32px; border-top: 1px solid var(--paper-edge); }
         .like-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px 30px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: var(--bg-primary);
-            border: 2px solid var(--primary);
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            box-shadow: 0 4px 15px rgba(196, 163, 90, 0.3);
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 13px 30px; border-radius: 40px; cursor: pointer;
+            font-family: var(--font-kai); font-size: 1.02rem; letter-spacing: 3px;
+            color: var(--bg-primary); background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: 1px solid var(--primary); transition: transform .3s ease, box-shadow .3s ease;
         }
+        .like-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,0,0,.35); }
+        .like-btn.liked { background: linear-gradient(135deg, #d2453a, var(--seal-dark)); border-color: #d2453a; color: #fff; }
+        .like-btn .heart { font-size: 1.3rem; }
+        .like-btn.liked .heart { animation: beat .6s ease; }
+        @keyframes beat { 0%{transform:scale(1)} 30%{transform:scale(1.35)} 60%{transform:scale(.95)} 100%{transform:scale(1)} }
+        .like-tip { text-align: center; color: var(--text-muted); font-size: .85rem; margin-top: 14px; }
 
-        .like-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(196, 163, 90, 0.4);
-        }
+        /* 卷宗四角角标 */
+.scroll-detail .tick { position: absolute; width: 16px; height: 16px; opacity: .65; }
+.scroll-detail .tick.tl { top: 12px; left: 12px; border-top: 1px solid; border-left: 1px solid; }
+.scroll-detail .tick.tr { top: 12px; right: 12px; border-top: 1px solid; border-right: 1px solid; }
+.scroll-detail .tick.bl { bottom: 12px; left: 12px; border-bottom: 1px solid; border-left: 1px solid; }
+.scroll-detail .tick.br { bottom: 12px; right: 12px; border-bottom: 1px solid; border-right: 1px solid; }
 
-        .like-btn:active {
-            transform: translateY(-1px) scale(1.02);
+        #toast-message {
+            position: fixed; top: 50%; left: 50%; z-index: 10000;
+            background: rgba(10,6,4,.88); color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 14px 28px; border-radius: 8px; letter-spacing: 2px;
         }
-
-        .like-btn.liked {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            border-color: #e74c3c;
-            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-        }
-
-        .like-btn.liked:hover {
-            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
-        }
-
-        .like-icon {
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .like-btn:hover .like-icon {
-            transform: scale(1.2);
-        }
-
-        .like-btn.liked .like-icon {
-            animation: heartbeat 0.6s ease;
-        }
-
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            25% { transform: scale(1.3); }
-            50% { transform: scale(1); }
-            75% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .like-count {
-            font-size: 1.2rem;
-            font-weight: 700;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .like-text {
-            transition: all 0.3s ease;
-        }
-
-        .like-btn.liked .like-text {
-            color: #fff;
-        }
-
-        .like-tip {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 15px;
-        }
-
-        /* 文章卡片点赞数 */
-        .post-card-likes {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
-
-        .post-card-likes .like-icon-small {
-            font-size: 0.9rem;
-        }
-
-        .post-card-likes.liked {
-            color: #e74c3c;
-        }
+        .error-box { text-align: center; padding: 60px 20px; color: #e07a6f; }
+        .error-box p { margin-bottom: 20px; }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="logo">⚔️ 侠客江湖</a>
-            <ul class="nav-links">
-                <li><a href="index.html">首页</a></li>
-                <li><a href="about.html">关于我</a></li>
-                <li><a href="projects.html">项目</a></li>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a class="brand" href="index.html"><span class="brand-seal">侠</span>江湖</a>
+            <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">归处</a></li>
+                <li><a href="about.html">侠客档案</a></li>
+                <li><a href="projects.html">兵器谱</a></li>
                 <li><a href="blog.html" class="active">武林秘籍</a></li>
+                <li><a href="index.html#contact">传信</a></li>
             </ul>
         </div>
     </nav>
 
-    <div class="container">
-        <div id="blog-list">
-            <div class="blog-header">
-                <h1>📜 武林秘籍</h1>
-                <p>代码江湖，以文会友。记录修行路上的心得体会，与君共勉。</p>
-            </div>
-
-            <div class="blog-filters" id="category-filters">
-                <button class="filter-btn active" data-category="all">全部</button>
-            </div>
-
-            <div class="posts-grid" id="posts-grid">
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>正在加载武林秘籍...</p>
+    <main class="archive">
+        <!-- 列表视图 -->
+        <div id="blogList">
+            <header class="archive-head">
+                <div>
+                    <div class="archive-kicker">武林秘籍 · SCROLL ARCHIVE</div>
+                    <h1 class="archive-title">武林<span class="accent">秘籍</span></h1>
+                    <p class="archive-sub">代码江湖，以文会友。此处典藏修行路上之心法、剑术与见闻，卷宗随取随阅，与君共勉。</p>
                 </div>
-            </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:18px;">
+                    <div class="seal seal-stamp">秘籍<br>阁藏</div>
+                    <div class="archive-meta">卷宗数 · <b id="postCount">6</b><br>载体 · <b>Markdown</b><br>编号 · <b>SCR-001</b></div>
+                </div>
+            </header>
+
+            <section class="volume">
+                <div class="volume-head reveal">
+                    <span class="volume-no">卷一</span>
+                    <h2 class="volume-title">秘籍目录</h2>
+                    <span class="volume-en">Catalog</span>
+                </div>
+                <div class="filters reveal" id="categoryFilters"></div>
+                <div class="grid grid-auto" id="postsGrid" style="margin-top:28px;">
+                    <div class="loading" style="grid-column:1/-1;"><div class="spinner"></div>正在整理秘籍卷宗…</div>
+                </div>
+            </section>
         </div>
 
-        <div id="blog-detail" style="display: none;">
-            <button class="back-btn" onclick="showPostList()">← 返回秘籍列表</button>
-            <div class="post-detail" id="post-detail-content">
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>正在加载秘籍内容...</p>
-                </div>
-            </div>
+        <!-- 详情视图 -->
+        <div id="blogDetail" style="display:none;">
+            <button class="btn btn-ghost detail-back" id="backBtn">← 返回秘籍目录</button>
+            <div id="postDetail"></div>
         </div>
-    </div>
+    </main>
 
-    <footer>
+    <footer class="footer">
         <p>&copy; 甲辰年 Denis LU · 江湖再见</p>
-        <p class="footer-links">
-            <a href="https://github.com/lccuhk" target="_blank" rel="noopener noreferrer">GitHub</a>
-        </p>
+        <p style="margin-top:8px;"><a href="https://github.com/lccuhk" target="_blank" rel="noopener noreferrer">GitHub</a></p>
     </footer>
 
     <script src="theme-manager.js"></script>
     <script>
-        // 文章元数据配置
+        /* ================= 卷宗元数据 ================= */
         const postsMetadata = [
-            {
-                id: 'hello-world',
-                title: '初入江湖，代码为剑',
-                date: '2025-01-15',
-                category: '心法心得',
-                tags: ['编程', '入门', '感悟'],
-                excerpt: '聊聊我是怎么一头扎进代码这个江湖的，以及那些年踩过的坑、吃过的苦、还有那点小小的成就感。',
-                file: 'posts/hello-world.md'
-            },
-            {
-                id: 'react-hooks-guide',
-                title: 'React Hooks 踩坑指南',
-                date: '2025-02-20',
-                category: '前端剑术',
-                tags: ['React', 'Hooks', '前端', '踩坑'],
-                excerpt: '聊聊我用 React Hooks 踩过的那些坑，以及总结出来的一些"保命"技巧。别问，问就是血和泪的教训。',
-                file: 'posts/react-hooks-guide.md'
-            },
-            {
-                id: 'python-ai-intro',
-                title: 'Python AI 入坑指南',
-                date: '2025-03-10',
-                category: 'AI心法',
-                tags: ['Python', 'AI', '机器学习', '入门'],
-                excerpt: '聊聊我是怎么从一个 Python 小白，一步步摸到 AI 门槛的。别被那些高大上的名词吓住，其实没你想的那么难。',
-                file: 'posts/python-ai-intro.md'
-            },
-            {
-                id: 'backend-microservices',
-                title: '我的第一个开源项目踩坑实录',
-                date: '2025-04-05',
-                category: '项目实战',
-                tags: ['开源', '项目', '踩坑', '学生'],
-                excerpt: '聊聊我做第一个开源项目踩过的坑，从啥也不会到慢慢搞懂，都是血和泪的教训。别问，问就是熬了好几个通宵。',
-                file: 'posts/backend-microservices.md'
-            },
-            {
-                id: 'developer-tools',
-                title: '学生党效率提升指南',
-                date: '2025-04-20',
-                category: '兵器谱',
-                tags: ['工具', '效率', '学生', 'VS Code', 'Git'],
-                excerpt: '聊聊我作为学生党，日常学习和写代码用到的那些神兵利器，用好这些工具，让你效率翻倍，早点写完作业早点玩。',
-                file: 'posts/developer-tools.md'
-            },
-            {
-                id: 'career-advice',
-                title: '学生党避坑指南',
-                date: '2025-05-05',
-                category: '江湖阅历',
-                tags: ['学生', '经验', '避坑', '学习'],
-                excerpt: '聊聊我作为学生踩过的那些坑，从本科到硕士，从学习到生活，都是血和泪的教训。希望你能少走点弯路。',
-                file: 'posts/career-advice.md'
-            }
+            { id:'hello-world', title:'初入江湖，代码为剑', date:'2025-01-15', category:'心法心得',
+              tags:['编程','入门','学生','感悟'], excerpt:'聊聊我是怎么一头扎进代码这个江湖的，以及那些年踩过的坑、吃过的苦、还有那点小小的成就感。', file:'posts/hello-world.md' },
+            { id:'react-hooks-guide', title:'React Hooks 踩坑指南', date:'2025-02-20', category:'前端剑术',
+              tags:['React','Hooks','前端','踩坑'], excerpt:'聊聊我用 React Hooks 踩过的那些坑，以及总结出来的一些"保命"技巧。别问，问就是血和泪的教训。', file:'posts/react-hooks-guide.md' },
+            { id:'python-ai-intro', title:'Python AI 入坑指南', date:'2025-03-10', category:'AI心法',
+              tags:['Python','AI','机器学习','入门'], excerpt:'聊聊我是怎么从一个 Python 小白，一步步摸到 AI 门槛的。别被那些高大上的名词吓住，其实没你想的那么难。', file:'posts/python-ai-intro.md' },
+            { id:'backend-microservices', title:'我的第一个开源项目踩坑实录', date:'2025-04-05', category:'项目实战',
+              tags:['开源','项目','踩坑','学生'], excerpt:'聊聊我做第一个开源项目踩过的坑，从啥也不会到慢慢搞懂，都是血和泪的教训。', file:'posts/backend-microservices.md' },
+            { id:'developer-tools', title:'学生党效率提升指南', date:'2025-04-20', category:'兵器谱',
+              tags:['工具','效率','学生','VS Code'], excerpt:'聊聊我作为学生党，日常学习和写代码用到的那些神兵利器，用好这些工具，效率翻倍，早点写完作业早点玩。', file:'posts/developer-tools.md' },
+            { id:'career-advice', title:'学生党避坑指南', date:'2025-05-05', category:'江湖阅历',
+              tags:['学生','经验','避坑','学习'], excerpt:'聊聊我作为学生踩过的那些坑，从本科到硕士，从学习到生活，都是血和泪的教训。希望你能少走点弯路。', file:'posts/career-advice.md' }
         ];
 
         let currentCategory = 'all';
         let currentPostId = null;
+        const CN = ['壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
+        const cnNo = i => CN[i] || (i + 1);
 
-        // 获取文章的完整路径（适配 GitHub Pages 子路径）
+        // 适配 GitHub Pages 子路径：相对 blog.html 解析
         function getPostPath(file) {
-            // 使用 URL API 自动处理相对路径
             const url = new URL(file, window.location.href);
             return url.pathname + url.search;
         }
+        function formatDate(s) {
+            return new Date(s).toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric' });
+        }
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            initCategoryFilters();
-            renderPosts();
-            
-            // 检查 URL 参数是否有文章 ID
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('post');
-            if (postId) {
-                showPostDetail(postId);
-            }
-        });
-
-        // 初始化分类筛选器
+        /* ================= 分类筛选 ================= */
         function initCategoryFilters() {
-            const categories = [...new Set(postsMetadata.map(p => p.category))];
-            const filtersContainer = document.getElementById('category-filters');
-            
-            categories.forEach(category => {
-                const btn = document.createElement('button');
-                btn.className = 'filter-btn';
-                btn.dataset.category = category;
-                btn.textContent = category;
-                btn.addEventListener('click', () => filterByCategory(category));
-                filtersContainer.appendChild(btn);
+            const cats = ['all', ...new Set(postsMetadata.map(p => p.category))];
+            const box = document.getElementById('categoryFilters');
+            box.innerHTML = cats.map(c =>
+                `<button class="chip ${c==='all'?'active':''}" data-cat="${c}">${c==='all'?'全部秘籍':c}</button>`
+            ).join('');
+            box.addEventListener('click', e => {
+                const btn = e.target.closest('.chip');
+                if (!btn) return;
+                box.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.cat;
+                renderPosts();
             });
         }
 
-        // 按分类筛选
-        function filterByCategory(category) {
-            currentCategory = category;
-            
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.category === category) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            renderPosts();
+        /* ================= 点赞（localStorage） ================= */
+        function getLikes() { try { return JSON.parse(localStorage.getItem('blog_likes') || '{}'); } catch(e){ return {}; } }
+        function saveLikes(d) { try { localStorage.setItem('blog_likes', JSON.stringify(d)); } catch(e){} }
+        function getLikeData(id) {
+            const d = getLikes()[id] || { count:0, liked:false };
+            if (d.count === 0 && !d.liked) d.count = (id.charCodeAt(0) + id.length * 7) % 48 + 5; // 稳定的初始点赞数
+            return d;
+        }
+        function toggleLike(id) {
+            const all = getLikes();
+            let d = all[id] || { count:0, liked:false };
+            if (d.count === 0 && !d.liked) d.count = (id.charCodeAt(0) + id.length * 7) % 48 + 5;
+            if (d.liked) { d.count = Math.max(0, d.count - 1); d.liked = false; }
+            else { d.count += 1; d.liked = true; }
+            all[id] = d; saveLikes(all);
+            const btn = document.getElementById('likeBtn');
+            if (btn) {
+                btn.classList.toggle('liked', d.liked);
+                btn.querySelector('.heart').textContent = d.liked ? '❤️' : '🤍';
+                btn.querySelector('.lk-count').textContent = d.count;
+                btn.querySelector('.lk-text').textContent = d.liked ? '已点赞' : '点赞支持';
+            }
+            showToast(d.liked ? '❤️ 感谢点赞！' : '已取消点赞');
+        }
+        let toastTimer = null;
+        function showToast(msg) {
+            let t = document.getElementById('toast-message');
+            if (t) t.remove();
+            t = document.createElement('div');
+            t.id = 'toast-message';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            t.animate([{opacity:0, transform:'translate(-50%,-50%) scale(.85)'},{opacity:1, transform:'translate(-50%,-50%) scale(1)'}], {duration:250, fill:'forwards'});
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                t.animate([{opacity:1},{opacity:0}], {duration:300, fill:'forwards'});
+                setTimeout(() => t.remove(), 300);
+            }, 1800);
         }
 
-        // 渲染文章列表
+        /* ================= 列表渲染 ================= */
         function renderPosts() {
-            const grid = document.getElementById('posts-grid');
-            let posts = postsMetadata;
-            
-            if (currentCategory !== 'all') {
-                posts = posts.filter(p => p.category === currentCategory);
-            }
-            
-            // 按日期排序（最新的在前）
-            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            if (posts.length === 0) {
-                grid.innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;">暂无相关秘籍</p>';
-                return;
-            }
-            
-            grid.innerHTML = posts.map(post => {
-                const likeData = getLikeData(post.id);
+            let list = postsMetadata.slice();
+            if (currentCategory !== 'all') list = list.filter(p => p.category === currentCategory);
+            list.sort((a,b) => new Date(b.date) - new Date(a.date));
+            document.getElementById('postCount').textContent = postsMetadata.length;
+            const grid = document.getElementById('postsGrid');
+            if (!list.length) { grid.innerHTML = '<p class="muted" style="grid-column:1/-1;text-align:center;padding:40px;">暂无此类秘籍</p>'; return; }
+            grid.innerHTML = list.map((p, i) => {
+                const lk = getLikeData(p.id);
                 return `
-                <article class="post-card" onclick="showPostDetail('${post.id}')">
-                    <span class="post-category">${post.category}</span>
-                    <h3 class="post-title">${post.title}</h3>
-                    <p class="post-excerpt">${post.excerpt}</p>
-                    <div class="post-meta">
-                        <span class="post-date">📅 ${formatDate(post.date)}</span>
-                        <div class="post-tags">
-                            ${post.tags.slice(0, 2).map(tag => `<span class="post-tag">${tag}</span>`).join('')}
-                        </div>
+                <article class="file-card scroll-card reveal" data-id="${p.id}">
+                    <span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
+                    <div class="file-no">卷宗 · ${cnNo(i)}</div>
+                    <span class="scroll-cat">${p.category}</span>
+                    <h3 class="scroll-title">${p.title}</h3>
+                    <p class="scroll-excerpt">${p.excerpt}</p>
+                    <div class="scroll-meta">
+                        <span>📅 ${formatDate(p.date)}</span>
+                        <span class="scroll-likes ${lk.liked?'liked':''}">${lk.liked?'❤️':'🤍'} ${lk.count}</span>
                     </div>
-                    <div class="post-card-likes ${likeData.liked ? 'liked' : ''}">
-                        <span class="like-icon-small">${likeData.liked ? '❤️' : '🤍'}</span>
-                        <span>${likeData.count} 人点赞</span>
-                    </div>
-                </article>
-            `}).join('');
+                </article>`;
+            }).join('');
+            grid.querySelectorAll('.scroll-card').forEach(card => {
+                card.addEventListener('click', () => showPostDetail(card.dataset.id));
+            });
+            const io = new IntersectionObserver((es) => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), {threshold:.1});
+            grid.querySelectorAll('.reveal').forEach(el => io.observe(el));
         }
 
-        // 显示文章详情
-        async function showPostDetail(postId) {
-            currentPostId = postId;
-            
-            // 更新 URL
+        /* ================= 详情渲染 ================= */
+        function parseMarkdown(md) {
+            const m = md.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+            if (!m) return { metadata:{}, content: md };
+            const meta = {};
+            m[1].split('\n').forEach(line => {
+                const i = line.indexOf(':');
+                if (i === -1) return;
+                const k = line.slice(0,i).trim();
+                let v = line.slice(i+1).trim();
+                if (v.startsWith('[') && v.endsWith(']')) {
+                    v = v.slice(1,-1).split(',').map(s => s.trim().replace(/^["']|["']$/g,'')).filter(Boolean);
+                }
+                meta[k] = v;
+            });
+            return { metadata: meta, content: m[2] };
+        }
+
+        async function showPostDetail(id) {
+            currentPostId = id;
             const url = new URL(window.location);
-            url.searchParams.set('post', postId);
+            url.searchParams.set('post', id);
             window.history.pushState({}, '', url);
-            
-            document.getElementById('blog-list').style.display = 'none';
-            document.getElementById('blog-detail').style.display = 'block';
-            
-            const post = postsMetadata.find(p => p.id === postId);
+
+            document.getElementById('blogList').style.display = 'none';
+            document.getElementById('blogDetail').style.display = 'block';
+            window.scrollTo({ top:0, behavior:'instant' });
+
+            const post = postsMetadata.find(p => p.id === id);
+            const box = document.getElementById('postDetail');
             if (!post) {
-                document.getElementById('post-detail-content').innerHTML = `
-                    <div class="error">
-                        <p>❌ 秘籍不存在</p>
-                        <button class="back-btn" onclick="showPostList()">← 返回秘籍列表</button>
-                    </div>
-                `;
+                box.innerHTML = '<div class="scroll-detail error-box"><p>❌ 秘籍不存在</p><button class="btn btn-ghost" onclick="showPostList()">← 返回秘籍目录</button></div>';
                 return;
             }
-            
-            let postPath = '';
+            box.innerHTML = '<div class="scroll-detail"><div class="loading"><div class="spinner"></div>正在展开卷宗…</div></div>';
+
+            const path = getPostPath(post.file);
             try {
-                postPath = getPostPath(post.file);
-                console.log('Loading post from:', postPath);
-                console.log('Current URL:', window.location.href);
-                
-                const response = await fetch(postPath);
-                console.log('Response status:', response.status);
-                console.log('Response ok:', response.ok);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const markdown = await response.text();
-                console.log('Markdown loaded, length:', markdown.length);
-                
-                const { metadata, content } = parseMarkdown(markdown);
-                
-                // 配置 marked
-                marked.setOptions({
-                    breaks: true,
-                    gfm: true
-                });
-                
-                const htmlContent = marked.parse(content);
-                
-                const likeData = getLikeData(postId);
-                const isLiked = likeData.liked;
-                const likeCount = likeData.count;
-                
-                document.getElementById('post-detail-content').innerHTML = `
-                    <div class="post-detail-header">
-                        <span class="post-detail-category">${metadata.category || post.category}</span>
-                        <h1 class="post-detail-title">${metadata.title || post.title}</h1>
-                        <div class="post-detail-meta">
-                            <span class="post-detail-date">📅 ${formatDate(metadata.date || post.date)}</span>
-                            <div class="post-detail-tags">
-                                ${(metadata.tags || post.tags).map(tag => `<span class="post-detail-tag">${tag}</span>`).join('')}
-                            </div>
+                const res = await fetch(path);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const md = await res.text();
+                const { metadata, content } = parseMarkdown(md);
+                marked.setOptions({ breaks:true, gfm:true });
+                const html = marked.parse(content);
+                const cat = metadata.category || post.category;
+                const date = metadata.date || post.date;
+                const tags = metadata.tags || post.tags;
+                const title = metadata.title || post.title;
+                const lk = getLikeData(id);
+
+                box.innerHTML = `
+                    <article class="scroll-detail">
+                        <span class="tick tl" style="border-color:var(--primary)"></span>
+                        <span class="tick tr" style="border-color:var(--primary)"></span>
+                        <span class="tick bl" style="border-color:var(--primary)"></span>
+                        <span class="tick br" style="border-color:var(--primary)"></span>
+                        <header class="detail-head">
+                            <span class="scroll-cat">${cat}</span>
+                            <h1 class="detail-title">${title}</h1>
+                            <div class="detail-meta">📅 ${formatDate(date)}</div>
+                            <div class="detail-tags">${(tags||[]).map(t => `<span class="tag">${t}</span>`).join('')}</div>
+                        </header>
+                        <div class="post-content">${html}</div>
+                        <div class="like-section">
+                            <button class="like-btn ${lk.liked?'liked':''}" id="likeBtn" onclick="toggleLike('${id}')">
+                                <span class="heart">${lk.liked?'❤️':'🤍'}</span>
+                                <span class="lk-count">${lk.count}</span>
+                                <span class="lk-text">${lk.liked?'已点赞':'点赞支持'}</span>
+                            </button>
                         </div>
-                    </div>
-                    <div class="post-content">
-                        ${htmlContent}
-                    </div>
-                    <div class="like-section">
-                        <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${postId}')" id="like-btn-${postId}">
-                            <span class="like-icon">${isLiked ? '❤️' : '🤍'}</span>
-                            <span class="like-count" id="like-count-${postId}">${likeCount}</span>
-                            <span class="like-text">${isLiked ? '已点赞' : '点赞支持'}</span>
-                        </button>
-                    </div>
-                    <p class="like-tip">你的鼓励是我持续创作的动力 ❤️</p>
-                `;
-                
-                // 滚动到顶部
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-            } catch (error) {
-                console.error('Error loading post:', error);
-                console.error('Attempted path:', postPath);
-                console.error('Current URL:', window.location.href);
-                document.getElementById('post-detail-content').innerHTML = `
-                    <div class="error">
-                        <p>❌ 加载秘籍失败</p>
-                        <p style="font-size:0.9rem;margin-top:10px;color:var(--text-muted);">
-                            错误信息：${error.message}<br><br>
-                            可能原因：<br>
-                            1. 请确认已部署到 GitHub Pages<br>
-                            2. 请确认 posts 目录下的文件已提交<br>
-                            3. 请刷新页面重试
-                        </p>
-                        <p style="font-size:0.8rem;margin-top:10px;color:var(--text-muted);">
-                            尝试加载路径：${postPath}
-                        </p>
-                        <button class="back-btn" onclick="showPostList()">← 返回秘籍列表</button>
-                    </div>
-                `;
+                        <p class="like-tip">你的鼓励是我持续创作的动力 ❤️</p>
+                    </article>`;
+            } catch (err) {
+                console.error('Load post error:', err, path);
+                box.innerHTML = `
+                    <div class="scroll-detail error-box">
+                        <p>❌ 加载秘籍失败（${err.message}）</p>
+                        <p style="color:var(--text-muted);font-size:.88rem;">尝试路径：${path}<br>请确认 posts 卷宗已部署，并强制刷新页面。</p>
+                        <p style="margin-top:18px;"><button class="btn btn-ghost" onclick="showPostList()">← 返回秘籍目录</button></p>
+                    </div>`;
             }
         }
 
-        // 显示文章列表
         function showPostList() {
             currentPostId = null;
-            
-            // 清除 URL 参数
             const url = new URL(window.location);
             url.searchParams.delete('post');
             window.history.pushState({}, '', url);
-            
-            document.getElementById('blog-list').style.display = 'block';
-            document.getElementById('blog-detail').style.display = 'none';
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('blogDetail').style.display = 'none';
+            document.getElementById('blogList').style.display = 'block';
+            window.scrollTo({ top:0, behavior:'smooth' });
         }
 
-        // 解析 Markdown 文件的 front matter
-        function parseMarkdown(markdown) {
-            const frontMatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-            const match = markdown.match(frontMatterRegex);
-            
-            if (match) {
-                const [, frontMatter, content] = match;
-                const metadata = {};
-                
-                frontMatter.split('\n').forEach(line => {
-                    const colonIndex = line.indexOf(':');
-                    if (colonIndex !== -1) {
-                        const key = line.slice(0, colonIndex).trim();
-                        let value = line.slice(colonIndex + 1).trim();
-                        
-                        // 解析数组
-                        if (value.startsWith('[') && value.endsWith(']')) {
-                            value = value.slice(1, -1).split(',').map(v => v.trim().replace(/^['"]|['"]$/g, ''));
-                        }
-                        
-                        // 移除引号
-                        if (typeof value === 'string') {
-                            value = value.replace(/^['"]|['"]$/g, '');
-                        }
-                        
-                        metadata[key] = value;
-                    }
-                });
-                
-                return { metadata, content };
-            }
-            
-            return { metadata: {}, content: markdown };
-        }
-
-        // 格式化日期
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-
-        // 处理浏览器前进后退
         window.addEventListener('popstate', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('post');
-            
-            if (postId) {
-                showPostDetail(postId);
-            } else {
-                showPostList();
-            }
+            const id = new URLSearchParams(window.location.search).get('post');
+            if (id) showPostDetail(id); else showPostList();
         });
 
-        // ==================== 点赞功能 ====================
-        
-        // 从 localStorage 获取所有点赞数据
-        function getLikesStorage() {
-            try {
-                const data = localStorage.getItem('blog_likes');
-                return data ? JSON.parse(data) : {};
-            } catch (e) {
-                console.error('Failed to get likes from localStorage:', e);
-                return {};
-            }
-        }
+        /* ================= 启动 ================= */
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+        document.getElementById('backBtn').addEventListener('click', showPostList);
+        const io = new IntersectionObserver((es) => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), {threshold:.1});
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-        // 保存点赞数据到 localStorage
-        function saveLikesStorage(data) {
-            try {
-                localStorage.setItem('blog_likes', JSON.stringify(data));
-            } catch (e) {
-                console.error('Failed to save likes to localStorage:', e);
-            }
-        }
-
-        // 获取文章的点赞数据
-        function getLikeData(postId) {
-            const likesData = getLikesStorage();
-            const postLikes = likesData[postId] || { count: 0, liked: false };
-            
-            // 为了演示效果，如果没有数据，给一个随机的初始点赞数（1-50）
-            if (postLikes.count === 0 && !postLikes.liked) {
-                postLikes.count = Math.floor(Math.random() * 50) + 1;
-            }
-            
-            return postLikes;
-        }
-
-        // 切换点赞状态
-        function toggleLike(postId) {
-            const likesData = getLikesStorage();
-            let postLikes = likesData[postId] || { count: 0, liked: false };
-            
-            // 如果没有数据，先初始化一个随机数
-            if (postLikes.count === 0 && !postLikes.liked) {
-                postLikes.count = Math.floor(Math.random() * 50) + 1;
-            }
-            
-            if (postLikes.liked) {
-                // 取消点赞
-                postLikes.count = Math.max(0, postLikes.count - 1);
-                postLikes.liked = false;
-            } else {
-                // 点赞
-                postLikes.count += 1;
-                postLikes.liked = true;
-            }
-            
-            likesData[postId] = postLikes;
-            saveLikesStorage(likesData);
-            
-            // 更新 UI
-            updateLikeUI(postId, postLikes);
-            
-            // 显示提示
-            showToast(postLikes.liked ? '❤️ 感谢点赞！' : '已取消点赞');
-        }
-
-        // 更新点赞 UI
-        function updateLikeUI(postId, likeData) {
-            // 更新文章详情页的点赞按钮
-            const btn = document.getElementById(`like-btn-${postId}`);
-            const countSpan = document.getElementById(`like-count-${postId}`);
-            
-            if (btn && countSpan) {
-                if (likeData.liked) {
-                    btn.classList.add('liked');
-                    btn.querySelector('.like-icon').textContent = '❤️';
-                    btn.querySelector('.like-text').textContent = '已点赞';
-                } else {
-                    btn.classList.remove('liked');
-                    btn.querySelector('.like-icon').textContent = '🤍';
-                    btn.querySelector('.like-text').textContent = '点赞支持';
-                }
-                countSpan.textContent = likeData.count;
-            }
-            
-            // 如果在文章列表页，也更新列表
-            if (currentPostId === null) {
-                renderPosts();
-            }
-        }
-
-        // 显示提示消息
-        function showToast(message) {
-            // 检查是否已存在 toast
-            let toast = document.getElementById('toast-message');
-            if (toast) {
-                toast.remove();
-            }
-            
-            // 创建新的 toast
-            toast = document.createElement('div');
-            toast.id = 'toast-message';
-            toast.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 15px 30px;
-                border-radius: 8px;
-                font-size: 1.1rem;
-                z-index: 10000;
-                animation: toastFadeIn 0.3s ease;
-                font-family: inherit;
-            `;
-            toast.textContent = message;
-            
-            document.body.appendChild(toast);
-            
-            // 2秒后消失
-            setTimeout(() => {
-                toast.style.animation = 'toastFadeOut 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 2000);
-        }
-
-        // 添加 toast 动画
-        const toastStyle = document.createElement('style');
-        toastStyle.textContent = `
-            @keyframes toastFadeIn {
-                from {
-                    opacity: 0;
-                    transform: translate(-50%, -50%) scale(0.8);
-                }
-                to {
-                    opacity: 1;
-                    transform: translate(-50%, -50%) scale(1);
-                }
-            }
-            @keyframes toastFadeOut {
-                from {
-                    opacity: 1;
-                    transform: translate(-50%, -50%) scale(1);
-                }
-                to {
-                    opacity: 0;
-                    transform: translate(-50%, -50%) scale(0.8);
-                }
-            }
-        `;
-        document.head.appendChild(toastStyle);
+        initCategoryFilters();
+        renderPosts();
+        const initialPost = new URLSearchParams(window.location.search).get('post');
+        if (initialPost && postsMetadata.some(p => p.id === initialPost)) showPostDetail(initialPost);
     </script>
 </body>
 </html>
